@@ -1,0 +1,88 @@
+nav{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 50px;
+    z-index: 90;
+
+}
+.website-logo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    font-size: 30px;
+}
+
+
+.nav-items{
+    padding-left: 60px;
+    display: flex;
+    flex: 2;
+    align-items: center;
+    gap: 50px;
+    height: 50px;    
+
+}
+.nav-items-home{
+    padding-left: 60px;
+    display: flex;
+    flex: 2;
+    align-items: center;
+    gap: 50px;
+    height: 50px;    
+  
+
+}
+.nav-items-home a{
+    text-decoration: none;
+    color : black;
+    position: relative;
+    padding: 5px 8px 5px 8px;
+
+}
+
+.nav-items  a {
+    text-decoration: none;
+    color : white;
+    position: relative;
+    padding: 5px 8px 5px 8px;
+
+}
+.nav-items a::before{
+    content: '';
+    position : absolute;
+    background-color: black;
+    top : 95%;
+    left : 0;
+    right : 0;
+    bottom: 0;
+    transition: transform 300ms ease-in-out;
+    transform: scaleX(0);
+
+}
+.nav-items a:hover::before,
+.nav-items  a:focus::before{
+    transform: scaleX(1);    
+}
+
+.nav-items-home a::before{
+    background-color: #66cc99;
+    content: '';
+    position : absolute;
+    top : 95%;
+    left : 0;
+    right : 0;
+    bottom: 0;
+    transition: transform 300ms ease-in-out;
+    transform: scaleX(0);
+}
+.nav-items-home a:hover::before,
+.nav-items-home  a:focus::before{
+    transform: scaleX(1);    
+}

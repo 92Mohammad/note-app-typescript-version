@@ -1,0 +1,59 @@
+.rigth-section{ 
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 243px;
+
+}
+.window-container {
+    position: fixed;
+    top: 0;
+    height: 40px;
+    display: flex;
+    flex: 1;
+
+}
+.save-content-btn-div{
+    padding-right: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    height: 40px;
+    background: #223e5b;
+
+}
+
+.save-content-btn{
+    background: rgb(255, 255, 201);
+    height: 35px;
+    width: 120px;
+    border-radius: 2px;
+    border: none;
+    font-size: 16px;
+
+}
+.Writes-and-edit-notes-contianer{
+    position: fixed;
+    top: 40px;
+    bottom: 0;
+    right: 0;
+    left: 243px;
+
+}
+
+.default-page-with-no-editor{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: #005AA7;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom, #FFFDE4, #005AA7);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #FFFDE4, #005AA7); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+.default-page-with-no-editor h1{
+    font-size: 4vw;
+    font-family: sans-serif;
+}

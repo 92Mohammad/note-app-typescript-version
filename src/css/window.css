@@ -1,0 +1,30 @@
+.window {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 100px;
+    justify-content: space-between;
+    color:  rgb(254, 254, 235);
+    cursor: pointer ;   
+     
+}
+
+.current-tab {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 100px;
+    justify-content: space-between;
+    cursor: pointer ;
+    background: rgb(254, 254, 235);
+    color:  #223e5b;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+.close-btn{
+    display: flex;
+    align-items: center;
+    color:  rgb(255, 255, 201);
+}

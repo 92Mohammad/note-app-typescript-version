@@ -1,0 +1,184 @@
+.side-bar{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 240px;
+    background: #1b324b;
+    display: flex;
+    flex-direction: column;
+    padding-left: 2px;
+    padding-right: 2px;
+
+}
+.logo {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+}
+.logo-title {
+    padding: 10px;;
+    font-size: 25px;
+    color:  rgb(255, 255, 201);
+
+}
+.user{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2px;   
+
+}
+.user-icon{
+    margin-right: 5px;
+    font-size: 40px;
+    color:  rgb(255, 255, 201);
+    cursor: pointer;
+}
+.user-name{
+    font-size: 18px;
+    color:  rgb(255, 255, 201);
+}
+.down-arrow {
+    color:  rgb(255, 255, 201);
+    font-size: 25px;
+    cursor: pointer;
+
+    
+}
+.create-btn-container{
+    margin-bottom: 2px;
+}
+.create-note-btn{
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: rgb(255, 255, 201);
+    font-size: 16px;
+}
+.note-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: rgb(255, 255, 201);
+    padding-left: 8px;
+    padding-right: 8px;
+    height: 40px;
+    margin-bottom: 2px;
+    justify-content: space-between;
+  
+    color: black;
+    
+}
+.left-part{
+    display: flex;
+    flex: 2;
+    height: 100%;
+    align-items: center;
+    gap: 5px;;
+    cursor: pointer;
+
+}
+.right-note-part {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    gap: 5px;
+
+}
+
+.note-title{
+    margin: 0;
+}
+.edit-title {
+    outline: none;
+    border: none;
+    padding: 4px;
+    width: 150px;
+}
+.edit-btn{
+    cursor: pointer;
+    padding: 5px
+}
+.delete-btn{
+    padding: 5px;
+    height: 100%;
+    color: crimson;
+    cursor: pointer;
+}
+
+.edit-btn:hover,  .delete-btn:hover {
+    background-color: #9bc5c3;
+}
+.input-title{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 2px;
+    align-items: center;
+    justify-content: space-between;
+}
+.input-title input{
+    width: 145px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid rgb(255, 255, 201);
+    background: transparent;
+    outline: none;
+    color:white;
+}
+
+.input-title button{
+    padding: 8px;
+    background: #34d49c;  
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.drop-down-menu{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #1b1b1b;
+    display: flex;
+    flex-direction: column;
+        
+}
+.user-name {
+
+    color: whitesmoke;
+
+}
+
+.my-user {
+    padding: 10px;
+    display: flex;
+    gap: 70px;
+    align-items: center;
+    cursor: pointer;
+}
+.current-user{
+    color: whitesmoke;
+
+}
+.logout-section{
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 68px;
+    color: whitesmoke;
+    border-top: 1px solid whitesmoke;
+    cursor: pointer;
+}
+.logout-icon{
+    font-size: 20px;
+}
+
+::placeholder{
+    color: black;
+}

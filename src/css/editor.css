@@ -1,0 +1,14 @@
+
+.editor{
+    position: fixed;
+    top: 40px;
+    left: 243px;
+    right: 0;
+    bottom: 0;
+    /* background: #000; */
+}
+
+.ql-formats button svg{
+    font-size: 30px !important;
+
+}
