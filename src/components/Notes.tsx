@@ -14,6 +14,8 @@ export default function Notes({noteId, title, getAllOpenTab, notes,  setNotes}: 
         method: "POST",
         headers: {
           'Content-Type' : 'application/json',
+          authorization: localStorage.getItem("jwtToken")!
+
         },
         body: JSON.stringify({
           note_id: noteId})
@@ -21,7 +23,7 @@ export default function Notes({noteId, title, getAllOpenTab, notes,  setNotes}: 
 
       if (response.status === 200){
           await getAllOpenTab();
-        // how can I call the seAscurrentTab function over here
+        // how can I call the set As CurrentTab function over here
       } 
     }
     catch(error){

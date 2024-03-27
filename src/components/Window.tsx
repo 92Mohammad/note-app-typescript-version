@@ -3,7 +3,7 @@ import { RxCross2 } from "react-icons/rx";
 import { useState } from 'react';
 import {RequestParameter, WindowProps} from "../utils";
 
-export default function Window({_id, title, currentTab, getContent, getAllOpenTab}: WindowProps ){
+export default function Window({_id, title, selectedTab, getContent, getAllOpenTab}: WindowProps ){
     // const [currentTab, setCurrentTab] = useState({})
     const closeOpenTab = async (noteId: string) => {
         try {
@@ -56,11 +56,11 @@ export default function Window({_id, title, currentTab, getContent, getAllOpenTa
     
     return (
         <div 
-            className={currentTab ? "current-tab" : "window"}
+            className={selectedTab ? "current-tab" : "window"}
             onClick={() => setAsCurrentTab(_id)}
         >
             <span className="title">{title}</span>
-            <div  className={ currentTab ? "current-tab-close-btn" : "close-btn"} >
+            <div  className={ selectedTab ? "current-tab-close-btn" : "close-btn"} >
                 <RxCross2 onClick={() => closeOpenTab(_id)}/>
             </div>
         </div>

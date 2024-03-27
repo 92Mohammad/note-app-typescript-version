@@ -1,4 +1,3 @@
 node_modules
-My-Notes-app/src/server/.env
+.env
 dist
-

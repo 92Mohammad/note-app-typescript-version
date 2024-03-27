@@ -31,6 +31,7 @@ export default function NotePage() {
 
             if (response.status === 200){
                 const data = await response.json()
+                console.log('get all open all tab: ',data)
                 setTabs(data);
             }
         }
@@ -54,7 +55,7 @@ export default function NotePage() {
     const saveContent = async() => {
         try{
             // first find the note_id of the current tab
-            const currentTab = tabs.filter((tab) => tab.currentTab === 1)
+            const currentTab = tabs.filter((tab) => tab.selectedTab === 1)
             const noteIdOfCurrentTab = currentTab[0]._id;
 
 
@@ -111,7 +112,7 @@ export default function NotePage() {
                                 key={index}
                                 _id = {tab._id}
                                 title ={tab.title}
-                                currentTab = {tab.currentTab}
+                                selectedTab = {tab.selectedTab}
                                 getAllOpenTab = {getAllOpenTab}
                                 getContent = {getContent}
                             />

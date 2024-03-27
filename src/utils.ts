@@ -20,7 +20,7 @@ export interface SideBarProps {
 export interface Tab {
     _id: string,
     title: string,
-    currentTab: number
+    selectedTab: number
 }
 
 export interface EditorProps {
