@@ -8,19 +8,14 @@ import Note from "../models/note.model";
 router.get('/getAllOpenTab',auth,  async(req, res) => {
 
     try {
-        console.log('get allopen  tab route')
         const userId = req.headers["userId"];
-        console.log(userId)
+
        const notes = await Note.find({userId: userId, openTab: true})
-        console.log('all open tabs', notes)
         const allOpenTabs = notes.map((note) => ({ _id: note._id, title: note.title, selectedTab: note.selectedTab }));
         if (allOpenTabs){
-            console.log('filterd open tab', allOpenTabs)
-
             return res.status(200).json( allOpenTabs );
         }
         return res.status(402).json({ message: 'Open tabs not found'})
-
     }
     catch(error: any){
         return res.status(500).json({error: error.message})

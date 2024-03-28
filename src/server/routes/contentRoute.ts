@@ -6,6 +6,7 @@ import Note from '../models/note.model'
 router.post('/saveContent', auth, async (req, res) => {
     try {
         const {noteContent, noteId} = req.body;
+
         const saveContent = await Note.findByIdAndUpdate(
             {_id: noteId },
             {$set: {content: noteContent}},
@@ -14,7 +15,7 @@ router.post('/saveContent', auth, async (req, res) => {
         if (saveContent){
             return res.status(201).json({message: "Content saved successfully"});
         }
-        return res.status(402).json({ message: 'could not save the content'});
+        return res.status(204).json({ message: 'could not save the content'});
     }
     catch(error: any){
         return res.status(500).json({error: error.message})
@@ -39,9 +40,11 @@ router.get('/getContent', async (req, res) => {
     try {
         const content = await Note.findOne({selectedTab : true});
         if (content){
+            console.log('inside content ')
             return res.status(200).json(content);
         }
-        return res.status(402).json({ message: 'could not get the content'});
+        console.log('outside content')
+        return res.status(204).json({ message: 'could not get the content'});
 
         // const sql = 'SELECT note_content FROM notes WHERE currentTab = ?'
         // connection.query(sql, [true], (error, results) => {

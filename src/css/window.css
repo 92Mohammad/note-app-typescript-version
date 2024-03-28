@@ -10,15 +10,16 @@
      
 }
 
+
 .current-tab {
     display: flex;
     align-items: center;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 12px;
+    padding-right: 12px;
     width: 100px;
     justify-content: space-between;
     cursor: pointer ;
-    background: rgb(254, 254, 235);
+    background: red;
     color:  #223e5b;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;

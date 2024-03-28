@@ -11,6 +11,7 @@ export default function NotePage() {
     const [editor, setEditor] = useState([])
     const [tabs, setTabs] = useState<Tab[]>([]);
     const [content , setContent] = useState<string>('');
+    console.log('tab: ', tabs);
     const handleChange = (value: string) => {
         setContent(value);  
     };
@@ -57,10 +58,11 @@ export default function NotePage() {
             const currentTab = tabs.filter((tab) => tab.selectedTab)
             const noteIdOfCurrentTab = currentTab[0]._id;
 
-            const response = await fetch('http://localhost:8000/note/saveContent', {
+            const response = await fetch('http://localhost:8000/content/saveContent', {
                 method: 'POST',
                 headers:{
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    authorization: localStorage.getItem('jwtToken')!
                 },
                 body: JSON.stringify({
                     noteContent: content,
@@ -77,12 +79,17 @@ export default function NotePage() {
     
   const getContent = async() => {
     try {
-      const response = await fetch('http://localhost:8000/note/getContent', {
-        method: "GET"
+      const response = await fetch('http://localhost:8000/content/getContent', {
+        method: "GET",
+          headers: {
+            "Content-Type": 'application/json',
+             authorization: localStorage.getItem('jwtToken')!
+          }
       })
       if (response.status === 200){
         const contentData = await response.json();
         const noteContent = contentData.note_content;
+        console.log('note content: ', noteContent);
         setContent(noteContent);
       }
     }
