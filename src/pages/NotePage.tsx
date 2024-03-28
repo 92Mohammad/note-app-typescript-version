@@ -11,7 +11,6 @@ export default function NotePage() {
     const [editor, setEditor] = useState([])
     const [tabs, setTabs] = useState<Tab[]>([]);
     const [content , setContent] = useState<string>('');
-
     const handleChange = (value: string) => {
         setContent(value);  
     };
@@ -22,16 +21,16 @@ export default function NotePage() {
     //
     const getAllOpenTab = async() => {
         try {
-            const response = await fetch('http://localhost:8000/getAllOpenTab', {
+            const response = await fetch('http://localhost:8000/tab/getAllOpenTab', {
                 method : 'GET',
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    authorization: localStorage.getItem("jwtToken")!
                 }
             })
 
             if (response.status === 200){
                 const data = await response.json()
-                console.log('get all open all tab: ',data)
                 setTabs(data);
             }
         }
@@ -55,9 +54,8 @@ export default function NotePage() {
     const saveContent = async() => {
         try{
             // first find the note_id of the current tab
-            const currentTab = tabs.filter((tab) => tab.selectedTab === 1)
+            const currentTab = tabs.filter((tab) => tab.selectedTab)
             const noteIdOfCurrentTab = currentTab[0]._id;
-
 
             const response = await fetch('http://localhost:8000/note/saveContent', {
                 method: 'POST',
@@ -102,12 +100,14 @@ export default function NotePage() {
         <main>
             <SideBar
                 getAllOpenTab = {getAllOpenTab}
+                tabs = {tabs}
+                setTabs = {setTabs}
                 // openNewNoteEditor = {openEditor}
             />
             <div className='rigth-section'>
                 <div className='tabs-and-save-btn'>
                     <div className='window-container'>
-                        {tabs.map((tab, index) => {
+                        {tabs.length !== 0 && tabs.map((tab, index) => {
                             return <Window
                                 key={index}
                                 _id = {tab._id}
@@ -115,10 +115,12 @@ export default function NotePage() {
                                 selectedTab = {tab.selectedTab}
                                 getAllOpenTab = {getAllOpenTab}
                                 getContent = {getContent}
+                                tabs = {tabs}
+                                setTabs = { setTabs }
                             />
                         })}
                     </div>
-                    <div className='save-content-btn-div'><button onClick = {saveContent}className='save-content-btn'>Save</button></div>
+                    <div className='save-content-btn-div'><button onClick = {saveContent} className='save-content-btn'>Save</button></div>
                 </div>
                 <div className='Writes-and-edit-notes-contianer'>
                     {/* {isTabOpen ? <Editor /> : <EditorBackground />} */}

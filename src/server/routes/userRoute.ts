@@ -71,7 +71,7 @@ router.post('/login', async (req, res) => {
 
 
 router.post('/logout', auth, (req, res) => {
-
+    console.log('hello')
     return res.status(200).json({ message: 'Successfully logout'})
 
 

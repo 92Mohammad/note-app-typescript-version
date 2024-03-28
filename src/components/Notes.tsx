@@ -3,7 +3,7 @@ import "../css/sidebar.css";
 import { useState } from 'react'
 import { NotesProps, RequestParameter } from '../utils'
 
-export default function Notes({noteId, title, getAllOpenTab, notes,  setNotes}: NotesProps) {
+export default function Notes({noteId, title, getAllOpenTab, notes,  setNotes, tabs, setTabs}: NotesProps) {
   const [isOpen , setIsOpen] = useState(true)
   const[edit, setEdit] = useState<boolean>(false);
   const[updatedTitle, setUpdatedTitle] = useState<string>("")
@@ -15,15 +15,17 @@ export default function Notes({noteId, title, getAllOpenTab, notes,  setNotes}: 
         headers: {
           'Content-Type' : 'application/json',
           authorization: localStorage.getItem("jwtToken")!
-
         },
         body: JSON.stringify({
           note_id: noteId})
         })
 
-      if (response.status === 200){
-          await getAllOpenTab();
-        // how can I call the set As CurrentTab function over here
+      if (response.status === 201){
+        //
+        const isTabOpen = tabs.find((tab) => tab._id === noteId);
+        if (!isTabOpen) {
+          setTabs((prevTabs) => [...prevTabs, {_id: noteId, title: title, selectedTab: false}])
+        }
       } 
     }
     catch(error){

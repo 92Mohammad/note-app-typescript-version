@@ -3,7 +3,7 @@ import { RxCross2 } from "react-icons/rx";
 import { useState } from 'react';
 import {RequestParameter, WindowProps} from "../utils";
 
-export default function Window({_id, title, selectedTab, getContent, getAllOpenTab}: WindowProps ){
+export default function Window({_id, title, selectedTab, getContent, getAllOpenTab, tabs, setTabs}: WindowProps ){
     // const [currentTab, setCurrentTab] = useState({})
     const closeOpenTab = async (noteId: string) => {
         try {
@@ -19,8 +19,8 @@ export default function Window({_id, title, selectedTab, getContent, getAllOpenT
             }
             const response = await fetch('http://localhost:8000/tab/closeOpenTab', closeTabParameter)
 
-            if (response.status === 200){ 
-                await getAllOpenTab();
+            if (response.status === 200){
+                setTabs(tabs.filter((tab) => tab._id !== noteId))
             }
         }
         catch (error){

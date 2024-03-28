@@ -8,11 +8,16 @@ import Note from "../models/note.model";
 router.get('/getAllOpenTab',auth,  async(req, res) => {
 
     try {
+        console.log('get allopen  tab route')
         const userId = req.headers["userId"];
-        const notes = await Note.find({_id: userId});
+        console.log(userId)
+       const notes = await Note.find({userId: userId, openTab: true})
+        console.log('all open tabs', notes)
         const allOpenTabs = notes.map((note) => ({ _id: note._id, title: note.title, selectedTab: note.selectedTab }));
         if (allOpenTabs){
-            return res.status(200).json({ allOpenTabs });
+            console.log('filterd open tab', allOpenTabs)
+
+            return res.status(200).json( allOpenTabs );
         }
         return res.status(402).json({ message: 'Open tabs not found'})
 
@@ -56,7 +61,7 @@ router.post('/closeOpenTab', auth, async (req, res) => {
         const noteId = req.body.note_id;
         const closeTab = await Note.updateOne({_id: noteId}, {$set: {openTab: false}})
         if (closeTab){
-            return res.status(201).json({message: 'Tab closed successfully'})
+            return res.status(200).json({message: 'Tab closed successfully'})
         }
         return res.status(402).json({message: "Could not close tab"});
     }

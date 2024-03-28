@@ -15,7 +15,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate} from "react-router-dom";
 
 
-export default function SideBar({getAllOpenTab}: SideBarProps) {
+export default function SideBar({tabs, setTabs, getAllOpenTab}: SideBarProps) {
   const navigate = useNavigate();
 
   const [click, setClick] = useState({
@@ -24,9 +24,8 @@ export default function SideBar({getAllOpenTab}: SideBarProps) {
   });
 
   const [notes, setNotes] = useState<Note[]>([]);
-
   const [logout, setLogout] = useState<boolean>(false);
-  console.log('note state: ', notes)
+
   function openInputBox() {
     setClick((prevClick) => {
       return {
@@ -39,7 +38,6 @@ export default function SideBar({getAllOpenTab}: SideBarProps) {
 
   const createNotes = async (Title: string) => {
     try {
-      console.log("hello there")
       const createNoteParameter: RequestParameter = {
         method: "POST",
         headers: {
@@ -52,7 +50,6 @@ export default function SideBar({getAllOpenTab}: SideBarProps) {
       const response = await fetch("http://localhost:8000/note/createNotes", createNoteParameter);
 
       if (response.status === 201) {
-        console.log("success")
         setClick((prevClick) => {
           return {
             ...prevClick,
@@ -66,9 +63,7 @@ export default function SideBar({getAllOpenTab}: SideBarProps) {
           _id: data.note_id,
           title: Title
         }
-        console.log("before set Note ")
         setNotes((prevNote) => [...prevNote, newNote])
-        console.log('after setNote')
       }
     } catch (error: any) {
       console.log(error.message);
@@ -89,7 +84,6 @@ export default function SideBar({getAllOpenTab}: SideBarProps) {
 
         if (res.status === 200) {
             const data = await res.json();
-            console.log('get all notes :  ', data)
             setNotes(data.notes);
         }
     } catch (error: any) {
@@ -114,6 +108,7 @@ export default function SideBar({getAllOpenTab}: SideBarProps) {
       const logOutParameter: RequestParameter = {
         method: "POST",
         headers: {
+          'Content-Type': "application.json",
           authorization: localStorage.getItem("jwtToken")!,
         },
       }
@@ -164,6 +159,8 @@ export default function SideBar({getAllOpenTab}: SideBarProps) {
             getAllOpenTab = {getAllOpenTab}
             setNotes={ setNotes }
             notes = {notes}
+            tabs = { tabs }
+            setTabs={setTabs}
             // openNewNoteEditor = {props.openEditor}
             // define the function of opening a new editor associated with the current Note in side baar
           />
