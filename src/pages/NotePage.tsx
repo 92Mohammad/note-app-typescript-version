@@ -16,10 +16,7 @@ export default function NotePage() {
         setContent(value);  
     };
     
-    // const openEditor = (Title: string, Id: number): void => {
-    //     setEditor((prevEditor) => [...prevEditor, {}])
-    // }
-    //
+
     const getAllOpenTab = async() => {
         try {
             const response = await fetch('http://localhost:8000/tab/getAllOpenTab', {

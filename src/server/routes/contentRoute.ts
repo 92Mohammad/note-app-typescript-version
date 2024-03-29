@@ -6,13 +6,14 @@ import Note from '../models/note.model'
 router.post('/saveContent', auth, async (req, res) => {
     try {
         const {noteContent, noteId} = req.body;
-
+        console.log(noteId, noteContent)
         const saveContent = await Note.findByIdAndUpdate(
             {_id: noteId },
             {$set: {content: noteContent}},
             {new: true}
         );
         if (saveContent){
+            console.log('inside save content')
             return res.status(201).json({message: "Content saved successfully"});
         }
         return res.status(204).json({ message: 'could not save the content'});
@@ -35,12 +36,15 @@ router.post('/saveContent', auth, async (req, res) => {
 })
 
 
-router.get('/getContent', async (req, res) => {
+router.get('/getContent', auth, async (req, res) => {
     // return the note_content of currentTab(or where currentTab == true)
     try {
-        const content = await Note.findOne({selectedTab : true});
+        const noteId = req.headers["userId"];
+
+        const content = await Note.findOne({_id: noteId, selectedTab : true});
+        console.log('content = ', content)
         if (content){
-            console.log('inside content ')
+            console.log('inside get content ', content)
             return res.status(200).json(content);
         }
         console.log('outside content')

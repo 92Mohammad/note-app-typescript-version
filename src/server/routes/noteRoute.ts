@@ -10,10 +10,13 @@ interface NoteType {
 router.get('/getAllNotes', auth, async(req, res) => {
     try {
         const userId = req.headers["userId"]
+        console.log(userId);
 
         const notes = await Note.find({ userId: userId}) as NoteType[];
-
+        console.log('all notes', notes)
         if (notes.length !== 0){
+            console.log('all notes', notes)
+
             return res.status(200).json({notes})
         }
         return res.status(402).json({ message: 'You have no Notes'})

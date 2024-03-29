@@ -21,6 +21,7 @@ export default function Window({_id, title, selectedTab, getContent, getAllOpenT
             const response = await fetch('http://localhost:8000/tab/closeOpenTab', closeTabParameter)
 
             if (response.status === 200){
+                console.log("remove sucess")
                 setTabs(tabs.filter((tab) => tab._id !== noteId))
             }
         }
@@ -28,7 +29,8 @@ export default function Window({_id, title, selectedTab, getContent, getAllOpenT
             console.log(error);
         }
     }
-   
+
+
 
     const setAsCurrentTab = async(noteId: string) => {
         try{
@@ -45,10 +47,17 @@ export default function Window({_id, title, selectedTab, getContent, getAllOpenT
             if (response.status === 201){
                 // here when getAllOpenTab function will call it will get the new currentTab so React Dom will 
                 // change the prev current tab to new current tab.
-                console.log('inside set current tab')
+
                 // first make the previous selected tab false then set the tab as selected tab with note id
-                setTabs(tabs.map((tab) => tab.selectedTab ? {_id: tab._id, title: tab.title, selectedTab: false} : tab))
-                setTabs(tabs.map((tab) => tab._id === noteId ? {_id: tab._id, title: tab.title, selectedTab: true}: tab))
+                console.log('inside set current tabb')
+                setTabs(tabs.map((tab) => {
+                    return {
+                        ...tab,
+                        selectedTab: tab._id === _id
+                    }
+                }))
+
+
                 // here I have to call the getContent method so that when currentTab change 
                 // it should get the content of new currentTab
                 // await getContent();
@@ -62,16 +71,22 @@ export default function Window({_id, title, selectedTab, getContent, getAllOpenT
     return (
         <div 
             className={selectedTab ? "current-tab" : "window"}
-            onClick={() => setAsCurrentTab(_id)}
+
             onMouseEnter={() => setButtonVisible(true)}
             onMouseLeave={() => setButtonVisible(false)}
         >
             <span
-                className="title">{title}
+                className="tab-title"
+                onClick={() => setAsCurrentTab(_id)}
+            >
+                {title}
             </span>
-            <div  className={ selectedTab ? "current-tab-close-btn" : "close-btn"} >
+            <div
+                className={ selectedTab ? "selected-tab-close-btn-container" : "close-btn-container"}
+                onClick={() => closeOpenTab(_id)}
+            >
                 {
-                    buttonVisible && <RxCross2 onClick={() => closeOpenTab(_id)}/>
+                    buttonVisible && <RxCross2 className = {selectedTab ? "selected-tab-close-btn" : "close-tab-btn"}/>
                 }
 
             </div>

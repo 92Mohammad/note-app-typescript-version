@@ -21,7 +21,7 @@ export default function Notes({noteId, title, getAllOpenTab, notes,  setNotes, t
         })
 
       if (response.status === 201){
-        //
+        console.log('inside post new open tab')
         const isTabOpen = tabs.find((tab) => tab._id === noteId);
         if (!isTabOpen) {
           setTabs((prevTabs) => [...prevTabs, {_id: noteId, title: title, selectedTab: false}])

@@ -6,8 +6,13 @@
     width: 100px;
     justify-content: space-between;
     color:  rgb(254, 254, 235);
-    cursor: pointer ;   
-     
+    cursor: pointer ;
+}
+.tab-title {
+    display: flex;
+    flex: 2;
+    height: 100%;
+    align-items: center;
 }
 
 
@@ -19,13 +24,34 @@
     width: 100px;
     justify-content: space-between;
     cursor: pointer ;
-    background: red;
-    color:  #223e5b;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    border-bottom: 2px solid rgb(254, 254, 235);
+    color:  rgb(254, 254, 235);
+    /*border-bottom-left-radius: 8px;*/
+    /*border-bottom-right-radius: 8px;*/
 }
-.close-btn{
+
+
+.close-btn-container, .selected-tab-close-btn-container{
     display: flex;
+    /*flex: 1;*/
     align-items: center;
-    color:  rgb(255, 255, 201);
+    justify-content: end;
+}
+
+.close-tab-btn :hover, .selected-tab-close-btn:hover{
+    background-color: gray;
+    border-radius: 50%;
+    color: rgb(254, 254, 235);
+}
+
+.selected-tab-close-btn-container:hover, close-btn-container:hover{
+    background-color: gray;
+    border-radius: 50%;
+}
+
+
+.close-tab-btn , .selected-tab-close-btn{
+    color: rgb(254, 254, 235);
+    border-radius: 50%;
+    padding: 1px;
 }
