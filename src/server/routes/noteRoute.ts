@@ -13,7 +13,6 @@ router.get('/getAllNotes', auth, async(req, res) => {
         console.log(userId);
 
         const notes = await Note.find({ userId: userId}) as NoteType[];
-        console.log('all notes', notes)
         if (notes.length !== 0){
             console.log('all notes', notes)
 

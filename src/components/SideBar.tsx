@@ -180,10 +180,9 @@ function InputBox({ createNotes }: InputBoxProps) {
             placeholder="Note..."
             type="text"
             onChange= {(e) => setNoteTitle(e.target.value)}
-            onKeyDown={(e) => {
+            onKeyDown={async(e) => {
               if (e.code === "Enter"){
-                console.log("inside key down")
-                createNotes(noteTitle)
+                await createNotes(noteTitle)
               }
             }}
         />

@@ -3,8 +3,7 @@ import { RxCross2 } from "react-icons/rx";
 import { useState } from 'react';
 import {RequestParameter, WindowProps} from "../utils";
 
-export default function Window({_id, title, selectedTab, getContent, getAllOpenTab, tabs, setTabs}: WindowProps ){
-    // const [currentTab, setCurrentTab] = useState({})
+export default function Window({_id, title, selectedTab, setContent, tabs, setTabs}: WindowProps ){
     const[buttonVisible, setButtonVisible] = useState<boolean>(false);
     const closeOpenTab = async (noteId: string) => {
         try {
@@ -21,7 +20,6 @@ export default function Window({_id, title, selectedTab, getContent, getAllOpenT
             const response = await fetch('http://localhost:8000/tab/closeOpenTab', closeTabParameter)
 
             if (response.status === 200){
-                console.log("remove sucess")
                 setTabs(tabs.filter((tab) => tab._id !== noteId))
             }
         }
@@ -35,7 +33,7 @@ export default function Window({_id, title, selectedTab, getContent, getAllOpenT
     const setAsCurrentTab = async(noteId: string) => {
         try{
             const response = await fetch('http://localhost:8000/tab/select-tab', {
-                method: "POST", 
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     authorization: localStorage.getItem('jwtToken')!
@@ -45,23 +43,23 @@ export default function Window({_id, title, selectedTab, getContent, getAllOpenT
                 })
             })
             if (response.status === 201){
-                // here when getAllOpenTab function will call it will get the new currentTab so React Dom will 
-                // change the prev current tab to new current tab.
-
                 // first make the previous selected tab false then set the tab as selected tab with note id
-                console.log('inside set current tabb')
-                setTabs(tabs.map((tab) => {
+                const updatedTab = tabs.map((tab) => {
                     return {
                         ...tab,
                         selectedTab: tab._id === _id
                     }
-                }))
+                });
 
-
-                // here I have to call the getContent method so that when currentTab change 
-                // it should get the content of new currentTab
-                // await getContent();
+                setTabs(updatedTab);
+                //find the content of selected tab
+                // and set the current tab content.
+                const findSelectedTab = updatedTab.find((tab) => tab.selectedTab)
+                if (findSelectedTab){
+                    setContent(findSelectedTab.content || '');
+                }
             }
+
         }
         catch(error){
             console.log(error);

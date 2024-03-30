@@ -15,7 +15,7 @@ export interface RequestParameter {
 export interface SideBarProps {
     tabs: Tab[],
     setTabs:  React.Dispatch<React.SetStateAction<Tab[]>>,
-    getAllOpenTab: () => Promise<void>,
+    getAllOpenTab?: () => Promise<void>,
     openNewNoteEditor?: () => void
 }
 
@@ -23,6 +23,7 @@ export interface Tab {
     _id: string,
     title: string,
     selectedTab: boolean
+    content?: string,
 }
 
 export interface EditorProps {
@@ -51,6 +52,6 @@ export interface NotesProps extends SideBarProps {
 }
 export interface WindowProps extends Tab, SideBarProps {
     tabs: Tab[],
-    setTabs: React.Dispatch<React.SetStateAction<Tab[]>>
-    getContent: () => Promise<void>
+    setTabs: React.Dispatch<React.SetStateAction<Tab[]>>,
+    setContent: React.Dispatch<React.SetStateAction<string>>
 }

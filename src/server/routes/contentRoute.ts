@@ -40,12 +40,16 @@ router.get('/getContent', auth, async (req, res) => {
     // return the note_content of currentTab(or where currentTab == true)
     try {
         const noteId = req.headers["userId"];
+        console.log(noteId);
+        const content = await Note.findOne(
+            {userId: noteId, selectedTab: true},
+        {content: 1}
+        )
 
-        const content = await Note.findOne({_id: noteId, selectedTab : true});
         console.log('content = ', content)
         if (content){
             console.log('inside get content ', content)
-            return res.status(200).json(content);
+            return res.status(200).json(content.content);
         }
         console.log('outside content')
         return res.status(204).json({ message: 'could not get the content'});

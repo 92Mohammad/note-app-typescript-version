@@ -6,7 +6,7 @@ interface JwtVerify {
 }
 const auth = async(req: Request, res: Response, next: NextFunction) =>  {
     try {
-        console.log('inside auth function')
+
         const token = req.headers["authorization"];
         if (!token) {
             return res.status(500).send({ message: "Missing auth header" })

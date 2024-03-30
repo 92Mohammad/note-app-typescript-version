@@ -2,6 +2,7 @@ import React from 'react'
 import SideBar from '../components/SideBar' // this is child2
 import Window from '../components/Window'   // this is child1 
 import Editor from '../components/Editor'
+import Button from '@mui/material/Button';
 import '../css/note.css'
 import { useState, useEffect } from 'react'
 import { Tab } from '../utils'
@@ -11,7 +12,7 @@ export default function NotePage() {
     const [editor, setEditor] = useState([])
     const [tabs, setTabs] = useState<Tab[]>([]);
     const [content , setContent] = useState<string>('');
-    console.log('tab: ', tabs);
+
     const handleChange = (value: string) => {
         setContent(value);  
     };
@@ -66,6 +67,7 @@ export default function NotePage() {
                     noteId: noteIdOfCurrentTab
                 })
             })
+
         }
         catch(error){
             console.log(error)
@@ -85,9 +87,7 @@ export default function NotePage() {
       })
       if (response.status === 200){
         const contentData = await response.json();
-        const noteContent = contentData.note_content;
-        console.log('note content: ', noteContent);
-        setContent(noteContent);
+        setContent(contentData);
       }
     }
     catch(error){
@@ -117,14 +117,23 @@ export default function NotePage() {
                                 _id = {tab._id}
                                 title ={tab.title}
                                 selectedTab = {tab.selectedTab}
-                                getAllOpenTab = {getAllOpenTab}
-                                getContent = {getContent}
+                                setContent={setContent}
                                 tabs = {tabs}
                                 setTabs = { setTabs }
                             />
                         })}
                     </div>
-                    <div className='save-content-btn-div'><button onClick = {saveContent} className='save-content-btn'>Save</button></div>
+                    <div className='save-content-btn-div'>
+                        <Button
+                            variant="contained"
+                            style = {{backgroundColor: 'rgb(255, 255, 201)', color: 'black'}}
+                            onClick = {saveContent}
+                            size = "medium"
+                        >
+                            Save
+                        </Button>
+                        {/*<button  >Save</button>*/}
+                    </div>
                 </div>
                 <div className='Writes-and-edit-notes-contianer'>
                     {/* {isTabOpen ? <Editor /> : <EditorBackground />} */}
