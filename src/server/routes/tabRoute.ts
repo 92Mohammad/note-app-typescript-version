@@ -40,17 +40,6 @@ router.post('/postNewOpenTab', auth,  async(req, res) => {
         return res.status(500).json({error: error.message})
     }
 
-    // now set the isTabOpen column as true in notes table so that we can identify that which tab is opened
-    // const sql = 'UPDATE notes SET isOpenTab = ?  WHERE note_id = ?'
-    // connection.query(sql, [true, noteId], (error, results) => {
-    //     if (error){
-    //         console.log(error.message);
-    //         return res.status(500).json({message: "Query failed"})
-    //     }
-    //     else {
-    //         return res.status(200).send({message: "Tab opened successfully"})
-    //     }
-    // })
 })
 
 
@@ -66,18 +55,6 @@ router.post('/closeOpenTab', auth, async (req, res) => {
     catch(error: any) {
         return res.status(500).json({error: error.message})
     }
-
-    // const sql = 'UPDATE notes SET isOpenTab = ? WHERE note_id = ?'
-    // connection.query(sql, [false, noteId], (error, results) => {
-    //     if (error){
-    //         console.log(error.message);
-    //         return res.status(500).json({message: "Query failed"})
-    //     }
-    //     else {
-    //         return res.status(200).send({message: "tab closed successfully"})
-    //
-    //     }
-    // })
  })
 
 // setCurrentTab
@@ -95,32 +72,9 @@ router.post('/select-tab', auth, async(req, res) => {
             return res.status(402).json({message: 'could not select the tab'})
         }
     }
-    catch(error: any){
+    catch(error: any) {
         return res.status(500).json({error: error.message})
     }
-
-    // make the value of currentTab as true for the given noteId and make rest fo the currentTab column as false
-    // const sql1 = 'UPDATE notes SET currentTab = ?'
-    // connection.query(sql1, [false], (error) => {
-    //     if (error){
-    //         console.log(error.message);
-    //         return res.status(500).json({message: "Query failed"})
-    //     }
-    //     else {
-    //         // if query does not fail it means that all value in currentTab column has been set to flase or 0
-    //         // now make a new query to set the value of currentTab which have note_id = noteId as true or 1
-    //         const sql2 = 'UPDATE notes SET currentTab = ? WHERE note_id = ?'
-    //         connection.query(sql2, [true, noteId], (error) => {
-    //             if (error){
-    //                 console.log(error.message);
-    //                 return res.status(500).json({message: "Query failed"})
-    //             }
-    //             else {
-    //                 return res.status(200).send({message: "Current tab has been set successfully"})
-    //             }
-    //         })
-    //     }
-    // })
 })
 
 export default router;

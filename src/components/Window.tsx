@@ -2,8 +2,9 @@ import '../css/window.css'
 import { RxCross2 } from "react-icons/rx";
 import { useState } from 'react';
 import {RequestParameter, WindowProps} from "../utils";
+import { Reorder} from "framer-motion";
 
-export default function Window({_id, title, selectedTab, setContent, tabs, setTabs}: WindowProps ){
+export default function Window({_id, title, selectedTab, setContent, tab,  tabs, setTabs}: WindowProps ){
     const[buttonVisible, setButtonVisible] = useState<boolean>(false);
     const closeOpenTab = async (noteId: string) => {
         try {
@@ -67,6 +68,7 @@ export default function Window({_id, title, selectedTab, setContent, tabs, setTa
     }
     
     return (
+        <Reorder.Item value={tab} draggable={true}>
         <div 
             className={selectedTab ? "current-tab" : "window"}
 
@@ -89,6 +91,7 @@ export default function Window({_id, title, selectedTab, setContent, tabs, setTa
 
             </div>
         </div>
+        </Reorder.Item>
     )
     
 }

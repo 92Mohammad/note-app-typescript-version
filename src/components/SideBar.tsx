@@ -92,8 +92,8 @@ export default function SideBar({tabs, setTabs, getAllOpenTab}: SideBarProps) {
 };
 
   useEffect(() => {
+
     getAllNotes();
-    // setNotes()
 
   }, []);
 

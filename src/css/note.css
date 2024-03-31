@@ -23,6 +23,14 @@
     background: #223e5b;
 
 }
+ul {
+    margin: 0;
+
+}
+ul li{
+    list-style: none;
+}
+
 
 .save-content-btn{
     background: rgb(255, 255, 201);

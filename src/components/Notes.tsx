@@ -1,13 +1,15 @@
 import { MdEdit, MdDelete } from "react-icons/md";
 import "../css/sidebar.css";
 import { useState } from 'react'
+import AlertDialogSlide from '../components/AlertDialogSlide'
 import { NotesProps, RequestParameter } from '../utils'
 
 export default function Notes({noteId, title, getAllOpenTab, notes,  setNotes, tabs, setTabs}: NotesProps) {
   const [isOpen , setIsOpen] = useState(true)
   const[edit, setEdit] = useState<boolean>(false);
   const[updatedTitle, setUpdatedTitle] = useState<string>("")
-
+  const [isOpenAlertBox, setIsOpenAlertBox] = useState<boolean>(false);
+  console.log('is open alert box: ', isOpenAlertBox)
   const postNewOpenTab = async(noteId: string) => {
     try {
       const response = await fetch('http://localhost:8000/tab/postNewOpenTab' ,{
@@ -33,29 +35,7 @@ export default function Notes({noteId, title, getAllOpenTab, notes,  setNotes, t
     }
   }
 
-  const deleteNote = async () => {
-    try {
-      const deleteNoteParameter: RequestParameter = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: localStorage.getItem("jwtToken")!
-        },
-        body: JSON.stringify({
-          noteId: noteId,
-          title: title,
-        })
-      }
-      const response = await fetch("http://localhost:8000/note/deleteNote", deleteNoteParameter);
 
-      if (response.status === 201) {
-        // here change the notes state so that react re-render the Note component
-        setNotes(notes.filter((note) => note._id !== noteId));
-      }
-    } catch (error) {
-      console.log(error); 
-    }
-  }
 
   const updateNoteTitle = async() => {
     try {
@@ -108,9 +88,12 @@ export default function Notes({noteId, title, getAllOpenTab, notes,  setNotes, t
           />
           <MdDelete
               className="delete-btn"
-              onClick={() => deleteNote() }
+              onClick={() => setIsOpenAlertBox((prevState) => !prevState)}
           />
         </div>
+        {
+          isOpenAlertBox && <AlertDialogSlide noteId={noteId} title = {title} notes = {notes} setNotes = {setNotes} setIsOpenAlertBox = {setIsOpenAlertBox}/>
+        }
 
       </div>
     </>

@@ -24,40 +24,6 @@ router.get('/getAllNotes', auth, async(req, res) => {
     catch (error: any) {
         return res.status(500).json({ error: error.message})
     }
-
-
-
-
-    // const currentToken = req.headers["authorization"]
-    // // check the whether currentToken lies in table of invalidate token or not
-    // const sql = 'SELECT *FROM expireTokens  WHERE invalidToken = ? '
-    // connection.query(sql, [currentToken], (err, results) => {
-    //     if (err) {
-    //         console.log('Query Failed: ', err.message)
-    //         return res.status(500)
-    //     }
-    //     else {
-    //         // if results length === 0 it means all is ok
-    //         if (results.length === 0) {
-    //             // write a new query to fetch all the notes form notes table
-    //             const sql1 = 'SELECT note_id, note_content FROM notes WHERE userId = ?'
-    //             connection.query(sql1, [userId], (err, results) => {
-    //                 if (err) {
-    //                     console.log('Query Failed: ', err.message)
-    //                     return res.status(500)
-    //                 }
-    //                 else {
-    //                     return res.status(200).send(results)
-    //                 }
-    //             })
-    //         }
-    //         else {
-    //             // means that some one has access to old token and he is making request for accessign content of a user
-    //             return res.status(401);
-    //
-    //         }
-    //     }
-    // })
 })
 
 

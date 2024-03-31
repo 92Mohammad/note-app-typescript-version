@@ -51,7 +51,16 @@ export interface NotesProps extends SideBarProps {
     setNotes: React.Dispatch<React.SetStateAction<Note[]>>
 }
 export interface WindowProps extends Tab, SideBarProps {
+    tab: Tab,
     tabs: Tab[],
     setTabs: React.Dispatch<React.SetStateAction<Tab[]>>,
     setContent: React.Dispatch<React.SetStateAction<string>>
+}
+
+export interface AlertBoxProps {
+    noteId: string,
+    title: string,
+    notes: Note[],
+    setNotes: React.Dispatch<React.SetStateAction<Note[]>>
+    setIsOpenAlertBox: React.Dispatch<React.SetStateAction<boolean>>
 }

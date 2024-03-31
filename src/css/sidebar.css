@@ -121,6 +121,7 @@
     align-items: center;
     justify-content: space-between;
 }
+
 .input-title input{
     width: 145px;
     padding: 8px;
@@ -180,5 +181,5 @@
 }
 
 ::placeholder{
-    color: black;
+    color:  rgb(255, 255, 201);
 }

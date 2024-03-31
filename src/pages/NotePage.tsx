@@ -6,12 +6,13 @@ import Button from '@mui/material/Button';
 import '../css/note.css'
 import { useState, useEffect } from 'react'
 import { Tab } from '../utils'
+import { Reorder } from "framer-motion"
 
 
 export default function NotePage() {
-    const [editor, setEditor] = useState([])
     const [tabs, setTabs] = useState<Tab[]>([]);
     const [content , setContent] = useState<string>('');
+
 
     const handleChange = (value: string) => {
         setContent(value);  
@@ -39,7 +40,6 @@ export default function NotePage() {
     }
 
     useEffect(() => {
-        // calling the getAllOpenTab function to get the open tab list
         getAllOpenTab();
     }, [])
 
@@ -67,10 +67,13 @@ export default function NotePage() {
                     noteId: noteIdOfCurrentTab
                 })
             })
-
+            // if (response.status === 201){
+            //     console.log('saved content')
+            //     enqueueSnackbar("Content saved successfully");
+            // }
         }
-        catch(error){
-            console.log(error)
+        catch(error: any){
+            console.log("Error: ", error.message)
         }
     }
 
@@ -106,11 +109,11 @@ export default function NotePage() {
                 getAllOpenTab = {getAllOpenTab}
                 tabs = {tabs}
                 setTabs = {setTabs}
-                // openNewNoteEditor = {openEditor}
             />
             <div className='rigth-section'>
                 <div className='tabs-and-save-btn'>
                     <div className='window-container'>
+                        <Reorder.Group axis="x" values={tabs} onReorder={setTabs}>
                         {tabs.length !== 0 && tabs.map((tab, index) => {
                             return <Window
                                 key={index}
@@ -118,42 +121,44 @@ export default function NotePage() {
                                 title ={tab.title}
                                 selectedTab = {tab.selectedTab}
                                 setContent={setContent}
+                                tab = {tab}
                                 tabs = {tabs}
                                 setTabs = { setTabs }
                             />
                         })}
+
+                        </Reorder.Group>
                     </div>
                     <div className='save-content-btn-div'>
                         <Button
                             variant="contained"
                             style = {{backgroundColor: 'rgb(255, 255, 201)', color: 'black'}}
-                            onClick = {saveContent}
+                            onClick = {() => saveContent() }
                             size = "medium"
                         >
                             Save
                         </Button>
-                        {/*<button  >Save</button>*/}
                     </div>
                 </div>
                 <div className='Writes-and-edit-notes-contianer'>
-                    {/* {isTabOpen ? <Editor /> : <EditorBackground />} */}
                     <Editor content = {content} handleChange = {handleChange}/>
 
                 </div>
             </div>
         </main>
+
     )       
 }
 
 
-function EditorBackground() {
-    return (
-        <>
-            <div className='default-page-with-no-editor'>
-                <h1>Write your thoughts</h1>
-            </div>
-        </>
-    )
-}
+// function EditorBackground() {
+//     return (
+//         <>
+//             <div className='default-page-with-no-editor'>
+//                 <h1>Write your thoughts</h1>
+//             </div>
+//         </>
+//     )
+// }
 
 
