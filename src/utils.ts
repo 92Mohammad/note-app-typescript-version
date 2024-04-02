@@ -27,7 +27,7 @@ export interface Tab {
 }
 
 export interface EditorProps {
-    content: string,
+    content: string;
     handleChange: (value: string) => void
 }
 
@@ -63,4 +63,14 @@ export interface AlertBoxProps {
     notes: Note[],
     setNotes: React.Dispatch<React.SetStateAction<Note[]>>
     setIsOpenAlertBox: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export interface TabsListProps {
+    tabs: Tab[],
+    setTabs:  React.Dispatch<React.SetStateAction<Tab[]>>
+    setContent: React.Dispatch<React.SetStateAction<string>>
+}
+
+export default function removeTab(tabs: Tab[]) {
+
 }

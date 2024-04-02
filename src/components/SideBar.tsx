@@ -161,8 +161,6 @@ export default function SideBar({tabs, setTabs, getAllOpenTab}: SideBarProps) {
             notes = {notes}
             tabs = { tabs }
             setTabs={setTabs}
-            // openNewNoteEditor = {props.openEditor}
-            // define the function of opening a new editor associated with the current Note in side baar
           />
         ))}
       </div>

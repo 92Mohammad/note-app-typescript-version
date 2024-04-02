@@ -1,18 +1,17 @@
 import React from 'react'
 import SideBar from '../components/SideBar' // this is child2
-import Window from '../components/Window'   // this is child1 
+import Window from '../components/Window'
 import Editor from '../components/Editor'
 import Button from '@mui/material/Button';
 import '../css/note.css'
 import { useState, useEffect } from 'react'
 import { Tab } from '../utils'
-import { Reorder } from "framer-motion"
+import { Reorder, AnimatePresence } from "framer-motion"
 
 
 export default function NotePage() {
     const [tabs, setTabs] = useState<Tab[]>([]);
     const [content , setContent] = useState<string>('');
-
 
     const handleChange = (value: string) => {
         setContent(value);  
@@ -67,10 +66,7 @@ export default function NotePage() {
                     noteId: noteIdOfCurrentTab
                 })
             })
-            // if (response.status === 201){
-            //     console.log('saved content')
-            //     enqueueSnackbar("Content saved successfully");
-            // }
+
         }
         catch(error: any){
             console.log("Error: ", error.message)
@@ -112,8 +108,9 @@ export default function NotePage() {
             />
             <div className='rigth-section'>
                 <div className='tabs-and-save-btn'>
+                    <Reorder.Group axis="x" values={tabs} onReorder={setTabs}>
                     <div className='window-container'>
-                        <Reorder.Group axis="x" values={tabs} onReorder={setTabs}>
+                        <AnimatePresence initial={false}>
                         {tabs.length !== 0 && tabs.map((tab, index) => {
                             return <Window
                                 key={index}
@@ -126,9 +123,9 @@ export default function NotePage() {
                                 setTabs = { setTabs }
                             />
                         })}
-
-                        </Reorder.Group>
+                        </AnimatePresence>
                     </div>
+                    </Reorder.Group>
                     <div className='save-content-btn-div'>
                         <Button
                             variant="contained"
@@ -142,23 +139,11 @@ export default function NotePage() {
                 </div>
                 <div className='Writes-and-edit-notes-contianer'>
                     <Editor content = {content} handleChange = {handleChange}/>
-
                 </div>
             </div>
         </main>
 
     )       
 }
-
-
-// function EditorBackground() {
-//     return (
-//         <>
-//             <div className='default-page-with-no-editor'>
-//                 <h1>Write your thoughts</h1>
-//             </div>
-//         </>
-//     )
-// }
 
 

@@ -44,7 +44,9 @@ export default function AlertDialogSlide({noteId, title, notes, setNotes, setIsO
 
             if (response.status === 201) {
                 // here change the notes state so that react re-render the Note component
+
                 setNotes(notes.filter((note) => note._id !== noteId));
+                setOpen(false)
             }
         } catch (error) {
             console.log(error);

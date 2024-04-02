@@ -25,10 +25,20 @@
 }
 ul {
     margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+
 
 }
 ul li{
     list-style: none;
+    display: flex;
+    align-items: center;
+    /*background-color: red;*/
+    height: 100%;
 }
 
 

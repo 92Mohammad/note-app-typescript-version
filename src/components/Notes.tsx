@@ -9,7 +9,7 @@ export default function Notes({noteId, title, getAllOpenTab, notes,  setNotes, t
   const[edit, setEdit] = useState<boolean>(false);
   const[updatedTitle, setUpdatedTitle] = useState<string>("")
   const [isOpenAlertBox, setIsOpenAlertBox] = useState<boolean>(false);
-  console.log('is open alert box: ', isOpenAlertBox)
+
   const postNewOpenTab = async(noteId: string) => {
     try {
       const response = await fetch('http://localhost:8000/tab/postNewOpenTab' ,{
@@ -23,7 +23,6 @@ export default function Notes({noteId, title, getAllOpenTab, notes,  setNotes, t
         })
 
       if (response.status === 201){
-        console.log('inside post new open tab')
         const isTabOpen = tabs.find((tab) => tab._id === noteId);
         if (!isTabOpen) {
           setTabs((prevTabs) => [...prevTabs, {_id: noteId, title: title, selectedTab: false}])
