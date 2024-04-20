@@ -40,22 +40,20 @@ var express_1 = require("express");
 var router = express_1.default.Router();
 var jwtAuthenticate_1 = require("../middleware/jwtAuthenticate");
 var note_model_1 = require("../models/note.model");
-router.get('/getAllNotes', jwtAuthenticate_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, notes, error_1;
+router.get('/getAllOpenTab', jwtAuthenticate_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var userId, allOpenTabs, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 userId = req.headers["userId"];
-                console.log(userId);
-                return [4 /*yield*/, note_model_1.default.find({ userId: userId })];
+                return [4 /*yield*/, note_model_1.default.find({ userId: userId, openTab: true }, { title: 1, selectedTab: 1, content: 1 })];
             case 1:
-                notes = _a.sent();
-                if (notes.length !== 0) {
-                    console.log('all notes', notes);
-                    return [2 /*return*/, res.status(200).json({ notes: notes })];
+                allOpenTabs = _a.sent();
+                if (allOpenTabs) {
+                    return [2 /*return*/, res.status(200).json(allOpenTabs)];
                 }
-                return [2 /*return*/, res.status(402).json({ message: 'You have no Notes' })];
+                return [2 /*return*/, res.status(402).json({ message: 'Open tabs not found' })];
             case 2:
                 error_1 = _a.sent();
                 return [2 /*return*/, res.status(500).json({ error: error_1.message })];
@@ -63,21 +61,20 @@ router.get('/getAllNotes', jwtAuthenticate_1.default, function (req, res) { retu
         }
     });
 }); });
-router.post('/createNotes', jwtAuthenticate_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var noteTitle, userId, newNote, error_2;
+router.post('/postNewOpenTab', jwtAuthenticate_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var noteId, newTab, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                noteTitle = req.body.title;
-                userId = req.headers["userId"];
-                return [4 /*yield*/, note_model_1.default.create({ title: noteTitle, userId: userId })];
+                noteId = req.body.note_id;
+                return [4 /*yield*/, note_model_1.default.updateOne({ _id: noteId }, { $set: { openTab: true } })];
             case 1:
-                newNote = _a.sent();
-                if (newNote) {
-                    return [2 /*return*/, res.status(201).json({ message: 'Notes created successfully', note_id: newNote._id })];
+                newTab = _a.sent();
+                if (newTab) {
+                    return [2 /*return*/, res.status(201).json({ message: 'new open tab created' })];
                 }
-                return [2 /*return*/, res.status(402).json({ message: 'Not able to create' })];
+                return [2 /*return*/, res.status(402).json({ message: "error in creating new tab" })];
             case 2:
                 error_2 = _a.sent();
                 return [2 /*return*/, res.status(500).json({ error: error_2.message })];
@@ -85,25 +82,51 @@ router.post('/createNotes', jwtAuthenticate_1.default, function (req, res) { ret
         }
     });
 }); });
-router.post('/deleteNote', jwtAuthenticate_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var noteId, deleteResult, error_3;
+router.post('/closeOpenTab', jwtAuthenticate_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var noteId, closeTab, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                noteId = req.body.noteId;
-                return [4 /*yield*/, note_model_1.default.deleteOne({ _id: noteId })];
+                noteId = req.body.note_id;
+                return [4 /*yield*/, note_model_1.default.updateOne({ _id: noteId }, { $set: { openTab: false } })];
             case 1:
-                deleteResult = _a.sent();
-                if (!deleteResult) {
-                    return [2 /*return*/, res.status(500).json({ message: "Could not delete note" })];
+                closeTab = _a.sent();
+                if (closeTab) {
+                    return [2 /*return*/, res.status(200).json({ message: 'Tab closed successfully' })];
                 }
-                console.log('deleted result: ', deleteResult);
-                return [2 /*return*/, res.status(201).send({ message: "notes deleted successfully" })];
+                return [2 /*return*/, res.status(402).json({ message: "Could not close tab" })];
             case 2:
                 error_3 = _a.sent();
-                return [2 /*return*/, res.status(500).json({ error: error_3.messgae })];
+                return [2 /*return*/, res.status(500).json({ error: error_3.message })];
             case 3: return [2 /*return*/];
+        }
+    });
+}); });
+// setCurrentTab
+router.post('/select-tab', jwtAuthenticate_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var noteId, makeSelectedTabFalse, makeAsSelected, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 4, , 5]);
+                noteId = req.body.note_id;
+                return [4 /*yield*/, note_model_1.default.updateMany({}, { $set: { selectedTab: false } })];
+            case 1:
+                makeSelectedTabFalse = _a.sent();
+                if (!makeSelectedTabFalse) return [3 /*break*/, 3];
+                return [4 /*yield*/, note_model_1.default.findByIdAndUpdate({ _id: noteId }, { $set: { selectedTab: true } }, { new: true })];
+            case 2:
+                makeAsSelected = _a.sent();
+                if (makeAsSelected) {
+                    return [2 /*return*/, res.status(201).json({ message: 'tab selected successfully' })];
+                }
+                return [2 /*return*/, res.status(402).json({ message: 'could not select the tab' })];
+            case 3: return [3 /*break*/, 5];
+            case 4:
+                error_4 = _a.sent();
+                return [2 /*return*/, res.status(500).json({ error: error_4.message })];
+            case 5: return [2 /*return*/];
         }
     });
 }); });

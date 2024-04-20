@@ -47,13 +47,11 @@ router.post('/signup', function (req, res) { return __awaiter(void 0, void 0, vo
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                console.log('signup route hits ');
                 _a = req.body, username = _a.username, email = _a.email, password = _a.password;
-                console.log(email, password);
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 6, , 7]);
-                return [4 /*yield*/, user_model_1.default.findOne({ username: username })];
+                return [4 /*yield*/, user_model_1.default.findOne({ userName: username })];
             case 2:
                 user = _b.sent();
                 if (!!user) return [3 /*break*/, 5];
@@ -61,7 +59,7 @@ router.post('/signup', function (req, res) { return __awaiter(void 0, void 0, vo
             case 3:
                 hashedPassword = _b.sent();
                 return [4 /*yield*/, user_model_1.default.create({
-                        username: username,
+                        userName: username,
                         email: email,
                         password: hashedPassword
                     })];
@@ -89,7 +87,7 @@ router.post('/login', function (req, res) { return __awaiter(void 0, void 0, voi
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 6, , 7]);
-                return [4 /*yield*/, user_model_1.default.findOne({ username: username })];
+                return [4 /*yield*/, user_model_1.default.findOne({ userName: username })];
             case 2:
                 user = _b.sent();
                 if (!!user) return [3 /*break*/, 3];
@@ -98,7 +96,8 @@ router.post('/login', function (req, res) { return __awaiter(void 0, void 0, voi
             case 4:
                 matchPassword = _b.sent();
                 if (matchPassword) {
-                    token = jsonwebtoken_1.default.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: 'id' });
+                    console.log();
+                    token = jsonwebtoken_1.default.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
                     return [2 /*return*/, res.status(201).json({ message: 'login successfully', jwtToken: token })];
                 }
                 _b.label = 5;
@@ -111,6 +110,7 @@ router.post('/login', function (req, res) { return __awaiter(void 0, void 0, voi
     });
 }); });
 router.post('/logout', jwtAuthenticate_1.default, function (req, res) {
+    console.log('hello');
     return res.status(200).json({ message: 'Successfully logout' });
     // const token = req.headers["authorization"]
     // // put the token in invalidate token so that in future any one access it will not be able to access the private content

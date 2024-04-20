@@ -40,69 +40,48 @@ var express_1 = require("express");
 var router = express_1.default.Router();
 var jwtAuthenticate_1 = require("../middleware/jwtAuthenticate");
 var note_model_1 = require("../models/note.model");
-router.get('/getAllNotes', jwtAuthenticate_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, notes, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+router.post('/saveContent', jwtAuthenticate_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, noteContent, noteId, saveContent, error_1;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                userId = req.headers["userId"];
-                console.log(userId);
-                return [4 /*yield*/, note_model_1.default.find({ userId: userId })];
+                _b.trys.push([0, 2, , 3]);
+                _a = req.body, noteContent = _a.noteContent, noteId = _a.noteId;
+                return [4 /*yield*/, note_model_1.default.findByIdAndUpdate({ _id: noteId }, { $set: { content: noteContent } }, { new: true })];
             case 1:
-                notes = _a.sent();
-                if (notes.length !== 0) {
-                    console.log('all notes', notes);
-                    return [2 /*return*/, res.status(200).json({ notes: notes })];
+                saveContent = _b.sent();
+                if (saveContent) {
+                    return [2 /*return*/, res.status(201).json({ message: "Content saved successfully" })];
                 }
-                return [2 /*return*/, res.status(402).json({ message: 'You have no Notes' })];
+                return [2 /*return*/, res.status(204).json({ message: 'could not save the content' })];
             case 2:
-                error_1 = _a.sent();
+                error_1 = _b.sent();
                 return [2 /*return*/, res.status(500).json({ error: error_1.message })];
             case 3: return [2 /*return*/];
         }
     });
 }); });
-router.post('/createNotes', jwtAuthenticate_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var noteTitle, userId, newNote, error_2;
+router.get('/getContent', jwtAuthenticate_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var noteId, content, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                noteTitle = req.body.title;
-                userId = req.headers["userId"];
-                return [4 /*yield*/, note_model_1.default.create({ title: noteTitle, userId: userId })];
+                noteId = req.headers["userId"];
+                console.log(noteId);
+                return [4 /*yield*/, note_model_1.default.findOne({ userId: noteId, selectedTab: true }, { content: 1 })];
             case 1:
-                newNote = _a.sent();
-                if (newNote) {
-                    return [2 /*return*/, res.status(201).json({ message: 'Notes created successfully', note_id: newNote._id })];
+                content = _a.sent();
+                console.log('content = ', content);
+                if (content) {
+                    console.log('inside get content ', content);
+                    return [2 /*return*/, res.status(200).json(content.content)];
                 }
-                return [2 /*return*/, res.status(402).json({ message: 'Not able to create' })];
+                console.log('outside content');
+                return [2 /*return*/, res.status(204).json({ message: 'could not get the content' })];
             case 2:
                 error_2 = _a.sent();
                 return [2 /*return*/, res.status(500).json({ error: error_2.message })];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
-router.post('/deleteNote', jwtAuthenticate_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var noteId, deleteResult, error_3;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                noteId = req.body.noteId;
-                return [4 /*yield*/, note_model_1.default.deleteOne({ _id: noteId })];
-            case 1:
-                deleteResult = _a.sent();
-                if (!deleteResult) {
-                    return [2 /*return*/, res.status(500).json({ message: "Could not delete note" })];
-                }
-                console.log('deleted result: ', deleteResult);
-                return [2 /*return*/, res.status(201).send({ message: "notes deleted successfully" })];
-            case 2:
-                error_3 = _a.sent();
-                return [2 /*return*/, res.status(500).json({ error: error_3.messgae })];
             case 3: return [2 /*return*/];
         }
     });

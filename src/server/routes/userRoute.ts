@@ -22,6 +22,7 @@ interface Login {
 
 router.post('/signup', async(req, res) => {
     const { username, email, password } = req.body;
+    console.log(username, email , password)
     try {
         const user = await User.findOne({userName: username}) as SignUp;
         if (!user){
@@ -35,7 +36,7 @@ router.post('/signup', async(req, res) => {
             return res.status(201).json({ message: 'User created successfully'})
         }
         if (user){
-            return res.status(409).json({message: 'User name already exist'} );
+            return res.status(200).json({message: 'User name already exist'} );
         }
 
     }
@@ -47,11 +48,12 @@ router.post('/signup', async(req, res) => {
 
 router.post('/login', async (req, res) => {
 
-    const { username, password } = req.body
+    const { username, password } = req.body;
+    console.log(username, password)
 
     try {
         const user = await User.findOne({ userName: username}) as Login;
-
+        console.log(user);
         if (!user){
             return res.status(402).json( { message: "User Not found"});
         }

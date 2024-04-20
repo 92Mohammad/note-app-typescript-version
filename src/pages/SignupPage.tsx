@@ -23,6 +23,8 @@ export default function SignupPage() {
         },
         body: JSON.stringify(formData)
       })
+      const data = await response.json();
+      
       if (response.status === 201) {
         navigate('/login')
       }

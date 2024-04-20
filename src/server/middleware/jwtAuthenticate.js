@@ -38,21 +38,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var jsonwebtoken_1 = require("jsonwebtoken");
 var auth = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var token, decoded;
+    var token;
     return __generator(this, function (_a) {
         try {
             token = req.headers["authorization"];
             if (!token) {
                 return [2 /*return*/, res.status(500).send({ message: "Missing auth header" })];
             }
-            decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-            if (decoded && decoded.userId) {
-                req.headers["userId"] = decoded.userId;
+            // now decode the token
+            jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET, function (err, payload) {
+                if (err || !payload) {
+                    return res.status(404).json({ error: err });
+                }
+                if (typeof payload === 'string') {
+                    return res.status(402).json({ message: "payload type is string" });
+                }
+                req.headers["userId"] = payload.userId;
                 next();
-            }
-            else {
-                return [2 /*return*/, res.status(500).json({ message: "Incorrect!! token" })];
-            }
+            });
         }
         catch (error) {
             return [2 /*return*/, res.status(500).json({ error: error.message })];

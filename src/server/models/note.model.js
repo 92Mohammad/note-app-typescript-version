@@ -7,12 +7,20 @@ var noteSchema = new mongoose_1.default.Schema({
         required: true
     },
     content: {
-        type: String,
-        require: true
+        type: String
+    },
+    selectedTab: {
+        type: Boolean,
+        default: false
+    },
+    openTab: {
+        type: Boolean,
+        default: false
     },
     userId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        require: true
     },
 });
 var Note = mongoose_1.default.model("Note", noteSchema);
