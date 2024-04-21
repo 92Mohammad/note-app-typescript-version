@@ -4,8 +4,9 @@ import { useState } from 'react';
 import {RequestParameter, WindowProps} from "../utils";
 import { Reorder} from "framer-motion";
 
-export default function Window({_id, title, selectedTab, setContent, tab,  tabs, setTabs}: WindowProps ){
+export default function Window({_id, title, selectedTab, setContent, tab,  tabs, setTabs, currentSelectedTab, setCurrentSelectedTab, setTabSwitch, notes, setNotes}: WindowProps ){
     const[buttonVisible, setButtonVisible] = useState<boolean>(false);
+
     const closeOpenTab = async (noteId: string) => {
         try {
             const closeTabParameter: RequestParameter  = {
@@ -21,7 +22,10 @@ export default function Window({_id, title, selectedTab, setContent, tab,  tabs,
             const response = await fetch('http://localhost:8000/tab/closeOpenTab', closeTabParameter)
 
             if (response.status === 200){
-                setTabs(tabs.filter((tab) => tab._id !== noteId))
+                // set note openTab property as false over here
+                setNotes(notes.map(note => note._id === noteId ? {...note, openTab: false}: note))
+
+                setTabs(tabs.filter((tab) => tab._id !== noteId));
             }
         }
         catch (error){
@@ -32,6 +36,7 @@ export default function Window({_id, title, selectedTab, setContent, tab,  tabs,
 
 
     const setAsCurrentTab = async(noteId: string) => {
+        setTabSwitch(true);
         try{
             const response = await fetch('http://localhost:8000/tab/select-tab', {
                 method: "POST",
@@ -71,7 +76,7 @@ export default function Window({_id, title, selectedTab, setContent, tab,  tabs,
         <Reorder.Item value={tab} draggable={true}>
         <div 
             className={selectedTab ? "current-tab" : "window"}
-
+            // onClick = {() => setCurrentSelectedTab()}
             onMouseEnter={() => setButtonVisible(true)}
             onMouseLeave={() => setButtonVisible(false)}
         >

@@ -8,13 +8,17 @@ interface NoteType {
     note_content: string
 }
 router.get('/getAllNotes', auth, async(req, res) => {
+    console.log('get all note route')
     try {
         const userId = req.headers["userId"]
-        console.log(userId);
+        
+        const notes = await Note.find(
+            { userId: userId},
+            {content: 0, selectedTab: 0}
 
-        const notes = await Note.find({ userId: userId}) as NoteType[];
+        ) as NoteType[];
+        console.log('notes: ',notes)
         if (notes.length !== 0){
-            console.log('all notes', notes)
 
             return res.status(200).json({notes})
         }
@@ -22,6 +26,7 @@ router.get('/getAllNotes', auth, async(req, res) => {
 
     }
     catch (error: any) {
+        console.log(error.message)
         return res.status(500).json({ error: error.message})
     }
 })

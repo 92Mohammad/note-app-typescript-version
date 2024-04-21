@@ -13,7 +13,7 @@ router.get('/getAllOpenTab',auth,  async(req, res) => {
        const allOpenTabs = await Note.find(
            {userId: userId, openTab: true},
            {title: 1, selectedTab: 1, content: 1}
-       )
+        )
 
         if (allOpenTabs){
             return res.status(200).json( allOpenTabs );

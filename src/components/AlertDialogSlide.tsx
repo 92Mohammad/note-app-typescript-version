@@ -7,7 +7,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
-import {RequestParameter, AlertBoxProps} from "../utils";
+import rmeoveTab, {RequestParameter, AlertBoxProps } from "../utils";
 
 
 const Transition = React.forwardRef(function Transition(
@@ -19,7 +19,7 @@ const Transition = React.forwardRef(function Transition(
     return <Slide direction="up" ref={ref} {...props}  />;
 });
 
-export default function AlertDialogSlide({noteId, title, notes, setNotes, setIsOpenAlertBox}: AlertBoxProps) {
+export default function AlertDialogSlide({noteId, title, notes, setNotes, setIsOpenAlertBox, tabs, setTabs}: AlertBoxProps) {
     const [open, setOpen] = React.useState(true);
 
     const handleClose = () => {
@@ -44,9 +44,12 @@ export default function AlertDialogSlide({noteId, title, notes, setNotes, setIsO
 
             if (response.status === 201) {
                 // here change the notes state so that react re-render the Note component
-
                 setNotes(notes.filter((note) => note._id !== noteId));
                 setOpen(false)
+                // also set the window tab state to new state so that remaining tab should be displayed
+                rmeoveTab(tabs, setTabs, noteId);
+                
+
             }
         } catch (error) {
             console.log(error);

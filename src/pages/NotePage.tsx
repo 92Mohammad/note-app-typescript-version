@@ -5,16 +5,51 @@ import Editor from '../components/Editor'
 import Button from '@mui/material/Button';
 import '../css/note.css'
 import { useState, useEffect } from 'react'
-import { Tab } from '../utils'
+import { Tab, Note } from '../utils'
 import { Reorder, AnimatePresence } from "framer-motion"
 
+const Tabs = [
+    {
+        _id: "1",
+        title: 'server.ts',
+        content: 'this is server file',
+        selectedTab: false,
+        openTab: true
+    },
+    {
+        _id: "2",
+        title: 'tabRoute.ts',
+        content: 'this is tab route file',
+        selectedTab: false,
+        openTab: true
+    },
+    {
+        _id: "3",
+        title: 'NotePage.tsx',
+        content: 'this is Note page file',
+        selectedTab: false,
+        openTab: true
+    },
+    
 
+]
 export default function NotePage() {
     const [tabs, setTabs] = useState<Tab[]>([]);
+
+      const [notes, setNotes] = useState<Note[]>([]);
     const [content , setContent] = useState<string>('');
+    const[currentSelectedTab, setCurrenSelectedTab] = useState<Tab>(tabs[0])
+    const[switchTab, setSwitchTab] = useState<boolean>(false);
+    
+
+    console.log('current open tabs are: ', tabs)
 
     const handleChange = (value: string) => {
         setContent(value);  
+        const findSelectedTab = tabs.find(tab => tab.selectedTab);
+        if(findSelectedTab){
+            setTabs(tabs.map(tab => tab._id === findSelectedTab._id ? {...tab, content: value}: tab))
+        }
     };
     
 
@@ -66,6 +101,10 @@ export default function NotePage() {
                     noteId: noteIdOfCurrentTab
                 })
             })
+            if (response.status == 201){
+
+
+            }
 
         }
         catch(error: any){
@@ -99,12 +138,16 @@ export default function NotePage() {
   }, [])
 
 
+
+
     return (
         <main>
             <SideBar
                 getAllOpenTab = {getAllOpenTab}
                 tabs = {tabs}
                 setTabs = {setTabs}
+                notes = {notes}
+                setNotes = {setNotes}
             />
             <div className='rigth-section'>
                 <div className='tabs-and-save-btn'>
@@ -121,20 +164,28 @@ export default function NotePage() {
                                 tab = {tab}
                                 tabs = {tabs}
                                 setTabs = { setTabs }
+                                currentSelectedTab = {currentSelectedTab}
+                                setCurrentSelectedTab = {setCurrenSelectedTab}
+                                setTabSwitch={setSwitchTab}
+                                notes = {notes}
+                                setNotes = {setNotes}
+
                             />
-                        })}
+                            
+                        })
+                        }
                         </AnimatePresence>
                     </div>
                     </Reorder.Group>
                     <div className='save-content-btn-div'>
-                        <Button
+                        {/* <Button
                             variant="contained"
                             style = {{backgroundColor: 'rgb(255, 255, 201)', color: 'black'}}
                             onClick = {() => saveContent() }
                             size = "medium"
                         >
                             Save
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
                 <div className='Writes-and-edit-notes-contianer'>

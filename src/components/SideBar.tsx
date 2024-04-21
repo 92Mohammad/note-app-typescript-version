@@ -4,18 +4,18 @@ import { FaUserAlt } from "react-icons/fa";
 import Notes from "./Notes";
 import "../css/sidebar.css";
 import {
-    SideBarProps,
-    RequestParameter,
-    Note,
-    InputBoxProps,
-    ButtonProps
+  SideBarProps,
+  RequestParameter,
+  Note, 
+  InputBoxProps,
+  ButtonProps
 } from "../utils";
 
 import React, { useEffect, useState } from "react";
 import { useNavigate} from "react-router-dom";
 
 
-export default function SideBar({tabs, setTabs, getAllOpenTab}: SideBarProps) {
+export default function SideBar({notes, setNotes,tabs, setTabs, getAllOpenTab}: SideBarProps) {
   const navigate = useNavigate();
 
   const [click, setClick] = useState({
@@ -23,8 +23,9 @@ export default function SideBar({tabs, setTabs, getAllOpenTab}: SideBarProps) {
     closeInput: true,
   });
 
-  const [notes, setNotes] = useState<Note[]>([]);
+ 
   const [logout, setLogout] = useState<boolean>(false);
+  console.log('all notes are: ', notes)
 
   function openInputBox() {
     setClick((prevClick) => {
@@ -61,7 +62,8 @@ export default function SideBar({tabs, setTabs, getAllOpenTab}: SideBarProps) {
         const data = await response.json();
         const newNote: Note = {
           _id: data.note_id,
-          title: Title
+          title: Title,
+          openTab: false
         }
         setNotes((prevNote) => [...prevNote, newNote])
       }
@@ -156,6 +158,7 @@ export default function SideBar({tabs, setTabs, getAllOpenTab}: SideBarProps) {
             key={index}
             noteId={note._id}
             title={note.title}
+            isOpen = {note.openTab}
             getAllOpenTab = {getAllOpenTab}
             setNotes={ setNotes }
             notes = {notes}
