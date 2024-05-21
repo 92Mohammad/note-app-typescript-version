@@ -111,10 +111,7 @@ export const useTab = ({setSelectedTab, notes, setNotes, saveContent, previousId
         if (res.ok){
           const data = await res.json()
           console.log('selecting new tab',data)
-          // 1. mark previous selected tab false
-          // const updatedTab = tabs.map(tab => tab._id === nextTab._id ? {...tab, selectedTab: true} : {...tab, selectedTab: false});
-          
-          // setTabs(updatedTab);
+
           // 2. set tab as selecteTab
           // 3. find the content of currentTab from tabs array
           const tab = tabs.find(tab => tab._id === nextTab._id)
