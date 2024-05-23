@@ -26,6 +26,7 @@ export const NotePage = () => {
   const { notes, setNotes, fetchAllNotes, createNewNote } = useNotes();  
   const[noteTitle, setNoteTitle] = useState<string>('');
   
+  
   const [ selectedTab, setSelectedTab ] = useState<TabsType>({
     _id: "",
     title: "",
@@ -56,7 +57,7 @@ export const NotePage = () => {
 
   }, [])
 
-
+  
   
   const deleteNote = (id: string) => {
     // 1. delete the note from notes array
@@ -67,6 +68,45 @@ export const NotePage = () => {
     removeTab(id);
   }
 
+
+  const editNoteTitle = async(noteId: string, newTitle: string) =>  {
+
+    console.log('id is : ', noteId, 'and new title is : ', newTitle)
+    // check if the title with noteId and newTitle are different then only make a backend call otherwise don't
+    const note  = notes.find(note => note._id === noteId)
+    if (note && note.title !== newTitle){
+      try {
+        const res = await fetch('http://localhost:8000/note/update-note-title', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+            "authorization": localStorage.getItem("authToken")!
+          },
+          body: JSON.stringify({
+            noteId: noteId,
+            newTitle: newTitle
+          })            
+        })
+  
+        if (res.ok){
+          const data = await res.json();
+          console.log('After updating note title: ', data)
+          // 1. update the title from note array
+          const updatedNoteArray = notes.map(note => note._id === noteId ? {...note, title: newTitle} : note);
+          setNotes(updatedNoteArray);
+  
+          // 2. update the title from tab array
+          const updatedTabsArray = tabs.map(tab => tab.noteId === noteId ? {...tab, title: newTitle}: tab);
+          setTabs(updatedTabsArray);
+        }
+      }
+      catch(error: any) {
+        console.log(error.message);
+  
+      }
+
+    }
+  }
   
 
   return (
@@ -75,11 +115,11 @@ export const NotePage = () => {
         <section className="flex w-60  fixed top-0 bottom-0 flex-col bg-gray-800">
             <h1 className="text-3xl flex  justify-center ">My Notes</h1>
             <div className="flex justify-center flex-col">
-              <div className="flex  justify-between ">
+              <div className="flex  justify-between  ">
                 <input 
                   type="text"
                   value=  {noteTitle}
-                  className="px-2 py-1 mt-2 text-black w-[80%] outline-none focus:shadow-blue-500 shadow"
+                  className="px-2 py-1 mt-2 text-black w-[75%] outline-none focus:shadow-blue-500 shadow rounded-sm"
                   placeholder="Note..."
                   onChange={(e) => setNoteTitle(e.target.value)}
                   onKeyDown={(e) => {
@@ -90,7 +130,7 @@ export const NotePage = () => {
 
                   />
                 <button 
-                  className="bg-blue-500 mt-2 w-12 font-semibold "
+                  className="bg-[#15202B] mt-2 w-14 font-semibold border border-white rounded-md  shadow-lg shadow-cyan-500/50 "
                   onClick={() => createNewNote({noteTitle, setNoteTitle})}
                   >
                     Add
@@ -107,6 +147,7 @@ export const NotePage = () => {
                       isOpen = {note.isOpen!}
                       openNewTab = {openNewTab}
                       deleteNote={deleteNote}
+                      onUpdate = {editNoteTitle}
                     /> 
                   })
                 }

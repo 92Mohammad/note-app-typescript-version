@@ -13,9 +13,9 @@ interface TabProps {
 export const Tab = ({id, title, tab, selectedTab, onSelect, onRemove}: TabProps) => {
 
     return (
-        <div className={`${selectedTab && selectedTab._id === id ? " bg-yellow-900" : "bg-gray-700 "} flex items-center gap-2 px-2  justify-between h-9 cursor-pointer`}>
+        <div className={`${selectedTab && selectedTab._id === id ? " bg-gray-900" : "bg-gray-700 "} flex items-center gap-2 px-2  justify-between h-9 cursor-pointer`}>
             <span 
-                className="text-white h-full flex items-center text-[16px]  px-4 bg-black"
+                className="text-white h-full flex items-center text-[16px]  px-4"
                 onClick={() => onSelect(tab)}
                 >
                     {title}

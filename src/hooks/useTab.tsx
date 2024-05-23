@@ -18,12 +18,15 @@ type useFetchTabsReturnType = {
   getAllTabs: () => void,
   openNewTab: (tabId: string, title: string) => void,
   selectNextTab: (nextTab: TabsType, previousId: string ) => Promise<void>,
-  removeTab: (tabId: string) => Promise<void>
+  removeTab: (tabId: string) => Promise<void>,
+
+
 }
 
 export const useTab = ({setSelectedTab, notes, setNotes, saveContent, previousId}: useTabProps): useFetchTabsReturnType => {
 
     const[tabs, setTabs] = useState<TabsType[]>([]);
+    
 
     const getAllTabs = async() => {
         try {
@@ -186,11 +189,16 @@ export const useTab = ({setSelectedTab, notes, setNotes, saveContent, previousId
       }
       catch(error: any){
         console.log(error.message)
-      }
+      }   
+    }
+
+
+
+    
     
 
     
-    }
+   
 
     return { tabs, setTabs, getAllTabs, openNewTab , selectNextTab, removeTab};
     

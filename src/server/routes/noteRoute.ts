@@ -1,13 +1,14 @@
-import express from 'express'
+import express,  {Request, Response } from 'express'
 const router = express.Router();
 import auth from '../middleware/jwtAuthenticate'
 import Note from '../models/note.model'
+import Tabs from '../models/tab.model';
 
 interface NoteType {
     note_id: string,
     note_content: string
 }
-router.get('/getAllNotes', auth, async(req, res) => {
+router.get('/getAllNotes', auth, async(req: Request, res: Response) => {
     
     try {
         const userId = req.headers["userId"]
@@ -30,7 +31,7 @@ router.get('/getAllNotes', auth, async(req, res) => {
 })
 
 
-router.post('/createNotes', auth, async(req, res) => {
+router.post('/createNotes', auth, async(req: Request, res: Response) => {
     try{
         const noteTitle = req.body.title;
         const userId = req.headers["userId"];
@@ -49,6 +50,35 @@ router.post('/createNotes', auth, async(req, res) => {
 })
 
 
+router.post('/update-note-title', auth,  async(req: Request, res: Response) => {
+    try {
+        const { noteId, newTitle} = req.body;
+        console.log(noteId, " ", newTitle);
+
+        const updatedNote = await Note.findByIdAndUpdate(
+            {_id: noteId},
+            {$set: {title: newTitle}},
+        )
+        if(updatedNote){
+            // now update the title from Tab collection
+            const updatedTab = await Tabs.updateOne(
+                {noteId: noteId},
+                {$set: {title: newTitle}},
+                {new: true}
+            )
+            if (updatedTab){
+                return res.status(200).json({message: "Title updated succesfully in both collection"});
+            }
+            return res.status(501).json({message: "Could not  updated title in Tab collection successfully"})
+        }
+        return res.status(501).json({message: "Could not updated title in Note collection successfully"});
+    }
+    catch(error: any){
+        console.error(error.message)
+        return res.status(500).json({message: error.message})
+    }
+
+})
 
 router.post('/deleteNote', auth, async (req, res) => {
     try {
