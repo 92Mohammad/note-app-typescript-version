@@ -26,7 +26,7 @@ export const Note = ({id,  title, isOpen, openNewTab, deleteNote,   onUpdate}: N
     }
 
     return (
-        <div className="flex justify-between gap-3 bg-[#38444D] text-white px-2 items-center">
+        <div className="flex justify-between gap-3 bg-[#38444D] text-white px-2 items-center ">
             {
                 !edit ? (
                     <span 

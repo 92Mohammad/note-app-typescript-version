@@ -9,7 +9,7 @@
 - [x] create state variable for text area to save the content
 - [x] automatic save the content
 - [x] add delete note functionality
-- [] onDeleting note tab should also remove from Tab bar
+- [x] onDeleting note tab should also remove from Tab bar
 - [x] remove the tab when click on cross btn
 - [x] add update note functionality
 - [x] connect note route with frontend

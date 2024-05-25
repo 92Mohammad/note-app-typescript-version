@@ -152,19 +152,22 @@ export const useTab = ({setSelectedTab, notes, setNotes, saveContent, previousId
           console.log('remove current tab :', data)
 
           // 1. change the selection of tab
+          // When you will get the next tab and select next tab(ans is when you are going to remove the current selecte tab)
+          // otherwise just rmove/filter the tab array
 
-          const nextTab = getNextTab(tabs, tabId);
-          if (nextTab._id === ''){
-            setSelectedTab(nextTab);
+          // So first find the noteId from tab array 
 
-          }
-          else {
-            selectNextTab(nextTab, previousId);
-          }
-
-          
-          // first find the noteId from tab array 
           const removedTab: TabsType[] = tabs.filter(tab => tab._id === tabId);
+            if (removedTab[0].selectedTab){
+              const nextTab = getNextTab(tabs, tabId);
+            if (nextTab._id === ''){
+              setSelectedTab(nextTab);
+            }
+            else {
+              selectNextTab(nextTab, previousId);
+            }
+          }
+          
 
           // 2. then remove the tab with tab id
           const remainingTab =  tabs.filter(tab => tab._id !== tabId);
