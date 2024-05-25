@@ -9,10 +9,10 @@
 - [x] create state variable for text area to save the content
 - [x] automatic save the content
 - [x] add delete note functionality
-- [x] onDeleting note tab should also remove from Tab bar
+- [] onDeleting note tab should also remove from Tab bar
 - [x] remove the tab when click on cross btn
-- [ ] add update note functionality
-- [ ] connect note route with frontend
+- [x] add update note functionality
+- [x] connect note route with frontend
 - [ ] call selectNextTab(tab) when tab is already open where tab in the method argument is the tab that is already open
 
 

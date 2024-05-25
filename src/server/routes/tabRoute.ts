@@ -94,6 +94,7 @@ router.post('/createNewTab', auth,  async(req, res) => {
 router.post('/remove-tab', auth, async (req, res) => {
     try {
         const { tabId } = req.body
+        console.log('remove tab route hit')
 
         // first save the conttent of tabId into noteId
         const tab = await Tabs.findOne({_id: tabId}, {content: 1, noteId: 1,  _id: 0})

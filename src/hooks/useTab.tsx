@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { NoteType, TabsType } from "../pages/NotePage";
 
-
+import { getNextTab } from "../utils";
 
 
 interface useTabProps {
@@ -97,37 +97,42 @@ export const useTab = ({setSelectedTab, notes, setNotes, saveContent, previousId
     }
 
     const selectNextTab  = async(nextTab: TabsType, previousId: string) => {
-      
-      try {
-        if (previousId !== "") {
-          // save the content of previousId first
-          saveContent(tabs)
-        }
-        const res = await fetch('http://localhost:8000/tab/select-next-tab',{
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({tabId: nextTab._id, previousTabId: previousId})
-        })
-        
-        if (res.ok){
-          const data = await res.json()
-          console.log('selecting new tab',data)
-
-          // 2. set tab as selecteTab
-          // 3. find the content of currentTab from tabs array
-          const tab = tabs.find(tab => tab._id === nextTab._id)
-          if (tab ) {
-            setSelectedTab({...nextTab, content: tab.content,  selectedTab: true});
+      if (nextTab._id !== ""){
+        try {
+          if (previousId !== "") {
+            // save the content of previousId first
+            saveContent(tabs)
           }
+          const res = await fetch('http://localhost:8000/tab/select-next-tab',{
+            method: 'POST',
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({tabId: nextTab._id, previousTabId: previousId})
+          })
+          
+          if (res.ok){
+            const data = await res.json()
+            console.log('selecting new tab',data)
   
+            // 2. set tab as selecteTab
+            // 3. find the content of currentTab from tabs array
+            const tab = tabs.find(tab => tab._id === nextTab._id)
+            if (tab ) {
+              setSelectedTab({...nextTab, content: tab.content,  selectedTab: true});
+            }
+    
+          }
+        }
+        catch(error: any){
+          console.log(error.message)
         }
       }
-      catch(error: any){
-        console.log(error.message)
+      else {
+        //means that nextTab is null (means that there is no tab to select)
+        
       }
-     
+      
     }
 
 
@@ -147,31 +152,16 @@ export const useTab = ({setSelectedTab, notes, setNotes, saveContent, previousId
           console.log('remove current tab :', data)
 
           // 1. change the selection of tab
-          const tab = tabs.find(tab => tab._id === tabId);
-          const indexOfTab = tabs.indexOf(tab!);
 
-          if (indexOfTab == 0 && tabs.length === 1){
-            // mark previous selected tab (that we have only one tab) as false
-            setTabs(tabs.map(tab => tab._id === tabId ? {...tab, selectedTab: false} : tab))
-            // setSelected tab properties
-            const nullValues:TabsType = {
-              _id: '',
-              title: '',
-              selectedTab: false,
-              content: '',
-              noteId: ""
-            }
-            setSelectedTab(nullValues)
+          const nextTab = getNextTab(tabs, tabId);
+          if (nextTab._id === ''){
+            setSelectedTab(nextTab);
+
           }
-          else if(indexOfTab == 0 && tabs.length > 1) {
-            selectNextTab(tabs[indexOfTab + 1], previousId);
+          else {
+            selectNextTab(nextTab, previousId);
           }
-          else if (indexOfTab == tabs.length - 1 && tabs.length > 1){
-            selectNextTab(tabs[indexOfTab - 1], previousId);
-          }
-          else if(tabs.length > 2) {
-            selectNextTab(tabs[indexOfTab - 1], previousId);
-          }
+
           
           // first find the noteId from tab array 
           const removedTab: TabsType[] = tabs.filter(tab => tab._id === tabId);

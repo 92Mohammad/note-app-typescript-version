@@ -80,14 +80,26 @@ router.post('/update-note-title', auth,  async(req: Request, res: Response) => {
 
 })
 
-router.post('/deleteNote', auth, async (req, res) => {
+router.delete('/delete-note', auth, async (req: Request, res: Response) => {
     try {
         const { noteId } = req.body;
-        const deleteResult = await Note.deleteOne({ _id: noteId})
+        // first delete the note from Note collection
+        
+        const deleteResult = await Note.deleteOne({ _id: noteId});
+        console.log('deleted result is: ', deleteResult);
+
+
         if (!deleteResult) {
-            return res.status(500).json({ message: "Could not delete note"});
+            return res.status(500).json({ message: "Could not delete note from Note collection"});
         }
-        return res.status(201).send({ message: "notes deleted successfully" })
+        // also remove the note from Tabs collection
+        const removedTab = await Tabs.deleteOne({noteId: noteId});
+        if (!removedTab){
+            return res.status(500).json({ message: "Could not delete note from Tabs collection"});
+
+        }
+        return res.status(200).json({message: "Note deleted successfully from both collection"})
+        
     }
     catch (error: any) {
         return res.status(500).json({ error: error.messgae});

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNotes } from '../hooks/useNotes';
 import { useSaveContent } from '../hooks/useSaveContent';
 import { useTab } from '../hooks/useTab';
+import { getNextTab } from '../utils';
 
 
 export interface NoteType {
@@ -59,13 +60,47 @@ export const NotePage = () => {
 
   
   
-  const deleteNote = (id: string) => {
-    // 1. delete the note from notes array
-    const updatedNotes = notes.filter(note => note._id !== id)
-    setNotes(updatedNotes);
+  const deleteNote = async(noteId: string) => {
+    try{
+      const res = await fetch('http://localhost:8000/note/delete-note', {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": localStorage.getItem("authToken")!
+        },
+        body: JSON.stringify({noteId: noteId})
+      })
+      if (res.ok){
+        const data = await res.json();
+        console.log('After successfully deletion: ', data)
 
-    // 2. remove the open tab with the id
-    removeTab(id);
+        // 1. first update the notes array locally
+        const remainingNote = notes.filter(note => note._id !== noteId);
+        setNotes(remainingNote);
+
+      
+        // 2. get the next tab to select
+        const removedTab = tabs.find(tab => tab.noteId === noteId);
+        console.log('the tab is going to remove: ', removedTab);
+        if (removedTab){
+          const nextTab = getNextTab(tabs, removedTab._id);
+          if (nextTab._id === ''){
+            setSelectedTab(nextTab);
+          }
+          else {
+            selectNextTab(nextTab, previousId);
+          }
+        }
+        // 3. update the tabs array (remove the tab with noteId === above noteId)
+        const remainingTabs = tabs.filter(tab => tab.noteId !== noteId);
+        setTabs(remainingTabs);
+
+      }
+
+    }
+    catch(error: any){
+      console.error(error.message)
+    }
   }
 
 
