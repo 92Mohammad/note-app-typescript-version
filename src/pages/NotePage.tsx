@@ -71,8 +71,6 @@ export const NotePage = () => {
         body: JSON.stringify({noteId: noteId})
       })
       if (res.ok){
-        const data = await res.json();
-        console.log('After successfully deletion: ', data)
 
         // 1. first update the notes array locally
         const remainingNote = notes.filter(note => note._id !== noteId);
@@ -81,7 +79,7 @@ export const NotePage = () => {
       
         // 2. get the next tab to select
         const removedTab = tabs.find(tab => tab.noteId === noteId);
-        console.log('the tab is going to remove: ', removedTab);
+
         if (removedTab){
           const nextTab = getNextTab(tabs, removedTab._id);
           if (nextTab._id === ''){
@@ -106,7 +104,6 @@ export const NotePage = () => {
 
   const editNoteTitle = async(noteId: string, newTitle: string) =>  {
 
-    console.log('id is : ', noteId, 'and new title is : ', newTitle)
     // check if the title with noteId and newTitle are different then only make a backend call otherwise don't
     const note  = notes.find(note => note._id === noteId)
     if (note && note.title !== newTitle){
@@ -124,8 +121,6 @@ export const NotePage = () => {
         })
   
         if (res.ok){
-          const data = await res.json();
-          console.log('After updating note title: ', data)
           // 1. update the title from note array
           const updatedNoteArray = notes.map(note => note._id === noteId ? {...note, title: newTitle} : note);
           setNotes(updatedNoteArray);
@@ -154,7 +149,7 @@ export const NotePage = () => {
                 <input 
                   type="text"
                   value=  {noteTitle}
-                  className="px-2 py-1 mt-2 text-black w-[75%] outline-none focus:shadow-blue-500 shadow rounded-sm"
+                  className="px-2 py-1 mt-2 text-black w-[75%] outline-none     rounded-sm"
                   placeholder="Note..."
                   onChange={(e) => setNoteTitle(e.target.value)}
                   onKeyDown={(e) => {

@@ -27,7 +27,4 @@ export const getNextTab = (tabs: TabsType[], tabId: string): TabsType => {
             }
         }
     return nullValues;
-   
-    
-
 }

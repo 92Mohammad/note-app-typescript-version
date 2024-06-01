@@ -32,7 +32,6 @@ export const LoginPage = () => {
                 localStorage.setItem('authToken', data.jwtToken);
                 navigate('/notes') 
            }
-           console.log(data);
         }
         catch(error: any){
             console.log(error.message);

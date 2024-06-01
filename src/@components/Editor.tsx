@@ -1,5 +1,5 @@
 import { TabsType } from '../pages/NotePage'
-import { useState} from 'react'
+
 
 interface EditorProps {
     selectedTab: TabsType;
@@ -12,9 +12,6 @@ interface EditorProps {
 
 export const Editor = ({selectedTab, setSelectedTab, tabs, setTabs, setPreviousId}: EditorProps) => {
     
-    
-    
-
     const handleContent = (content: string)=> {
         setPreviousId(selectedTab._id)
         // 1. first set the content of tabs 
@@ -24,7 +21,7 @@ export const Editor = ({selectedTab, setSelectedTab, tabs, setTabs, setPreviousI
         setSelectedTab({...selectedTab, content: content});
 
     }
-    console.log(selectedTab && selectedTab.content)
+    
     return (
         <div>
             <textarea 
@@ -36,7 +33,6 @@ export const Editor = ({selectedTab, setSelectedTab, tabs, setTabs, setPreviousI
                 className="w-full bg-gray-900 px-2 py-2 border-2 outline-none rounded-md"
                 onChange = {(e) => handleContent(e.target.value) }
             >
-
             </textarea>
         </div>
     )

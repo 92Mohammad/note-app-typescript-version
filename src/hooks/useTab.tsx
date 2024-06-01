@@ -66,8 +66,7 @@ export const useTab = ({setSelectedTab, notes, setNotes, saveContent, previousId
         })
         if (res.ok){
           const data = await res.json();
-          console.log('data after new tab created ', data.tab)
-          
+                    
           // 1. make isOpen property of note as true
           setNotes(notes.map(note => note._id === tabId ? {...note, isOpen: true}: note));
   
@@ -112,9 +111,7 @@ export const useTab = ({setSelectedTab, notes, setNotes, saveContent, previousId
           })
           
           if (res.ok){
-            const data = await res.json()
-            console.log('selecting new tab',data)
-  
+            
             // 2. set tab as selecteTab
             // 3. find the content of currentTab from tabs array
             const tab = tabs.find(tab => tab._id === nextTab._id)
@@ -148,8 +145,6 @@ export const useTab = ({setSelectedTab, notes, setNotes, saveContent, previousId
   
         })
         if (res.ok){
-          const data = await res.json();
-          console.log('remove current tab :', data)
 
           // 1. change the selection of tab
           // When you will get the next tab and select next tab(ans is when you are going to remove the current selecte tab)
@@ -184,15 +179,6 @@ export const useTab = ({setSelectedTab, notes, setNotes, saveContent, previousId
         console.log(error.message)
       }   
     }
-
-
-
-    
-    
-
-    
-   
-
-    return { tabs, setTabs, getAllTabs, openNewTab , selectNextTab, removeTab};
+  return { tabs, setTabs, getAllTabs, openNewTab , selectNextTab, removeTab};
     
 }
