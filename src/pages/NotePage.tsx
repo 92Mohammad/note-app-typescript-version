@@ -26,6 +26,7 @@ export const NotePage = () => {
 
   const { notes, setNotes, fetchAllNotes, createNewNote } = useNotes();  
   const[noteTitle, setNoteTitle] = useState<string>('');
+  console.log("rendor")
   
   
   const [ selectedTab, setSelectedTab ] = useState<TabsType>({
@@ -50,12 +51,7 @@ export const NotePage = () => {
   
   useEffect(() => {
     fetchAllNotes()
-  }, [])
-
-        
-  useEffect(() => {
     getAllTabs()
-
   }, [])
 
   

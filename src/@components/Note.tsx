@@ -9,7 +9,6 @@ interface NoteProps {
     openNewTab: (id: string, title: string) => void;
     deleteNote: (noteId: string) => void,
     onUpdate: (noteId: string, newTitle: string ) => Promise<void>
-
 }
 
 export const Note = ({id,  title, isOpen, openNewTab, deleteNote,   onUpdate}: NoteProps) => {
@@ -73,15 +72,8 @@ export const Note = ({id,  title, isOpen, openNewTab, deleteNote,   onUpdate}: N
         
                         </div>              
                     </div>
-    
-
                 )
-
-            }
-            
-           
-
-            
+            }            
         </div>
     )
 }
