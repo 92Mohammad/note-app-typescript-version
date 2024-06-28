@@ -2,40 +2,35 @@
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useForm } from '../hooks/useForm'
-import { User } from '../utils';
 import { useNavigate} from 'react-router-dom'
+import { UserSignup } from '../features/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../app/store';
+import { useEffect } from 'react'
+
 
 export const SignUpPage = () => {
 
+    const dispatch: AppDispatch = useDispatch();
+    const { isSignUp } = useSelector((state: RootState) => state.user)
+    
     const { formData, handleForm } = useForm({
         username: "",
         email: "",
         password: "",
     })
     const navigate = useNavigate();
+    
+    useEffect(() => {
 
-    const UserSignUP = async() => {
+        if (isSignUp ){
+            // dispatch(setSignup(false));
+            navigate('/login');
+        }
 
-        try {
-            const newUser: User = formData;
-            const res = await fetch('http://localhost:8000/user/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(newUser)
-            })
-            const data = await res.json();
-            console.log(data);
-            if (res.status === 201){
-                navigate('/login');
-                console.log(data.message);
-            }
-        }
-        catch(error: any ){
-            console.log(error.message);
-        }
-    }
+    }, [dispatch,isSignUp , navigate])
+    
+
     return (
         <main className="bg-gray-950 fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center flex-col gap-4">
             
@@ -74,7 +69,7 @@ export const SignUpPage = () => {
                 <Button 
                     variant="contained"
                     size='large'
-                    onClick = {() => UserSignUP()}
+                    onClick = {() => dispatch(UserSignup(formData))}
                 >
                     SignUp
                 </Button>

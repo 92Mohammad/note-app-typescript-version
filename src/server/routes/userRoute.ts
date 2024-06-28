@@ -41,14 +41,14 @@ router.post('/signup', async(req, res) => {
                 password: hashedPassword
             })
             if (newUser){
-                return res.status(201).json({ message: 'User created successfully'})
+                return res.status(201).json({messageType: "success",  message: 'User created successfully'})
             }
             else {
-                return res.json({message: "User registeration failed!!"})
+                return res.json({messageType: "error", message: "User registeration failed!!"})
             }
         }
         else {
-            return res.status(200).json({message: 'User name already exist'} );
+            return res.status(200).json({messageType: "error",message: 'User name already exist'} );
         }
 
     }
@@ -71,16 +71,16 @@ router.post('/login', async (req, res) => {
     try {
         const user = await User.findOne({ userName: username}) as Login;
         if (!user){
-            return res.status(402).json( { message: "User Not found"});
+            return res.status(402).json( {messageType: "error", message: "User Not found"});
         }
         else {
             const matchPassword = await bcrypt.compare(password, user.password)
             if (matchPassword){
                 const token = jwt.sign({ userId: user._id } , process.env.JWT_SECRET!, { expiresIn: '1d'} )
-                return res.status(201).json({message: 'login successfully' ,  jwtToken: token })
+                return res.status(201).json({messageType: "success", message: 'login successfully' ,  jwtToken: token })
             }
             else {
-                return res.json({message: 'password does not match', matchPassword});
+                return res.json({ messageType: "error", message: 'password does not match', matchPassword});
             }
         }
     }

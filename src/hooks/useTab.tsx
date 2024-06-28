@@ -19,8 +19,6 @@ type useFetchTabsReturnType = {
   openNewTab: (tabId: string, title: string) => void,
   selectNextTab: (nextTab: TabsType, previousId: string ) => Promise<void>,
   removeTab: (tabId: string) => Promise<void>,
-
-
 }
 
 export const useTab = ({setSelectedTab, notes, setNotes, saveContent, previousId}: useTabProps): useFetchTabsReturnType => {

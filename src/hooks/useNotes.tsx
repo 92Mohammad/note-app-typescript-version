@@ -8,9 +8,6 @@ type useNoteReturnType = {
   setNotes: React.Dispatch<React.SetStateAction<NoteType[]>>,
   fetchAllNotes: () => void,
   createNewNote: ({noteTitle, setNoteTitle}: createNoteProps ) => void,
-  
-
-
 }
 
 type createNoteProps = {
@@ -22,9 +19,7 @@ type createNoteProps = {
 
 export const useNotes = (): useNoteReturnType => {
     const[notes, setNotes] = useState<NoteType[]>([]);
-    
 
-    
     const fetchAllNotes = async() => {
         try{
           const res = await fetch('http://localhost:8000/note/getAllNotes', {

@@ -6,6 +6,8 @@ export interface User {
     password: string
 }
 
+export const BASE_URL = 'http://localhost:8000'
+
 export const getNextTab = (tabs: TabsType[], tabId: string): TabsType => {
     const tab = tabs.find(tab => tab._id === tabId);
     const indexOfTab = tabs.indexOf(tab!);
@@ -28,3 +30,5 @@ export const getNextTab = (tabs: TabsType[], tabId: string): TabsType => {
         }
     return nullValues;
 }
+
+

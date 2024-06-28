@@ -3,6 +3,7 @@ import { User } from '../utils'
 
 
 type handleFormParameter =  React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+
 export const useForm = (initialValue: User) => {
     const [formData, setFormData] = useState<User>(initialValue);
 

@@ -2,41 +2,34 @@
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useForm } from '../hooks/useForm'
-import { User } from '../utils';
 import { useNavigate } from 'react-router-dom';
+import { UserLogin } from '../features/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../app/store';
+import { useEffect } from 'react';
+
 
 
 export const LoginPage = () => {
 
     const navigate = useNavigate();
+    const dispatch: AppDispatch = useDispatch();
+    const { isLogin } = useSelector((state: RootState)=> state.user)
+
     
     const {formData, handleForm} = useForm({
         username: '',
         password: ''
     })
     
-
-    const UserLogin = async() => {
-        try {
-           const user: User = formData;
-           const res = await fetch('http://localhost:8000/user/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(user)
-           })
-
-           const data = await res.json();
-           if (res.status === 201){
-                localStorage.setItem('authToken', data.jwtToken);
-                navigate('/notes') 
-           }
+    useEffect(() => {
+        if (isLogin){
+            navigate('/notes') 
         }
-        catch(error: any){
-            console.log(error.message);
-        }
-    }
+
+    }, [dispatch, navigate, isLogin])
+
+   
 
 
     return (
@@ -67,7 +60,7 @@ export const LoginPage = () => {
                     variant="contained"
                     size='large'
                     fullWidth
-                    onClick = {() => UserLogin()}
+                    onClick = {() => dispatch(UserLogin(formData))}
                 >
                     Login
                 </Button>
