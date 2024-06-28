@@ -19,14 +19,14 @@ router.get('/getAllNotes', auth, async(req: Request, res: Response) => {
         
         if (notes.length !== 0){
 
-            return res.status(200).json(notes)
+            return res.status(200).json({messageType: 'success', notes} )
         }
-        return res.status(402).json({ message: 'You have no Notes'})
+        return res.status(402).json({messageType: 'error', error: 'You have no Notes'})
 
     }
     catch (error: any) {
         console.log(error.message)
-        return res.status(500).json({ error: error.message})
+        return res.status(500).json({ messageType: 'error', error: error.message})
     }
 })
 
@@ -106,8 +106,5 @@ router.delete('/delete-note', auth, async (req: Request, res: Response) => {
     }
 
 })
-
-
-
 
 export default router;

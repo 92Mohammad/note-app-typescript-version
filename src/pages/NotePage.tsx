@@ -5,16 +5,12 @@ import { useEffect, useState } from "react";
 import { useNotes } from '../hooks/useNotes';
 import { useSaveContent } from '../hooks/useSaveContent';
 import { useTab } from '../hooks/useTab';
-import { getNextTab } from '../utils';
+import { getNextTab, NoteType } from '../utils';
+import { fetchAllNotes, createNewNote, setNoteTitle, addNewNotes } from '../features/NoteSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../app/store';
 
-
-export interface NoteType {
-  _id: string,
-  title: string;
-  isOpen?: boolean 
-}
-
-  
+ 
 export interface TabsType  extends NoteType{
   selectedTab: boolean;
   content: string ;
@@ -24,9 +20,14 @@ export interface TabsType  extends NoteType{
 
 export const NotePage = () => {
 
-  const { notes, setNotes, fetchAllNotes, createNewNote } = useNotes();  
-  const[noteTitle, setNoteTitle] = useState<string>('');
+  const dispatch: AppDispatch = useDispatch();
+  const { notes, noteTitle } = useSelector((state: RootState) => state.notes) 
+  console.log('this is notes; ', notes)
+
+  const {  setNotes } = useNotes();  
+  // const[noteTitle, setNoteTitle] = useState<string>('');
   console.log("rendor")
+  console.log("this is note title: ", noteTitle)
   
   
   const [ selectedTab, setSelectedTab ] = useState<TabsType>({
@@ -50,7 +51,7 @@ export const NotePage = () => {
   });
   
   useEffect(() => {
-    fetchAllNotes()
+    dispatch(fetchAllNotes())
     getAllTabs()
   }, [])
 
@@ -150,14 +151,14 @@ export const NotePage = () => {
                   onChange={(e) => setNoteTitle(e.target.value)}
                   onKeyDown={(e) => {
                     if(e.code === 'Enter'){
-                      createNewNote({noteTitle, setNoteTitle})
+                      dispatch(createNewNote({noteTitle, setNoteTitle, addNewNotes}))
                     }
                   }}
 
                   />
                 <button 
                   className="bg-[#15202B] mt-2 w-14 font-semibold border border-white rounded-md  shadow-lg shadow-cyan-500/50 "
-                  onClick={() => createNewNote({noteTitle, setNoteTitle})}
+                  onClick={() => dispatch(createNewNote({noteTitle, setNoteTitle, addNewNotes}))}
                   >
                     Add
                   </button>

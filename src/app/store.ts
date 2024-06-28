@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer  from "../features/userSlice";
+import notesReducer from '../features/NoteSlice'
 // import { useDispatch } from "react-redux";
 
 export const store = configureStore({
     reducer: {
-        user: userReducer
+        users: userReducer,
+        notes: notesReducer
     }
 })
 

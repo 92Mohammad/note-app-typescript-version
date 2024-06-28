@@ -8,13 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../app/store';
 import { useEffect } from 'react';
 
-
-
 export const LoginPage = () => {
 
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
-    const { isLogin } = useSelector((state: RootState)=> state.user)
+    const { isLogin } = useSelector((state: RootState)=> state.users)
 
     
     const {formData, handleForm} = useForm({
@@ -24,12 +22,11 @@ export const LoginPage = () => {
     
     useEffect(() => {
         if (isLogin){
+            // dispatch(setLogin(false));
             navigate('/notes') 
         }
 
     }, [dispatch, navigate, isLogin])
-
-   
 
 
     return (

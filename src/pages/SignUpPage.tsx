@@ -12,7 +12,7 @@ import { useEffect } from 'react'
 export const SignUpPage = () => {
 
     const dispatch: AppDispatch = useDispatch();
-    const { isSignUp } = useSelector((state: RootState) => state.user)
+    const { isSignUp } = useSelector((state: RootState) => state.users)
     
     const { formData, handleForm } = useForm({
         username: "",

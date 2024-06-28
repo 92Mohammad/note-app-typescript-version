@@ -1,4 +1,5 @@
 import { TabsType } from "./pages/NotePage";
+import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 
 export interface User {
     username: string;
@@ -6,6 +7,18 @@ export interface User {
     password: string
 }
 
+export interface NoteType {
+    _id: string,
+    title: string;
+    isOpen?: boolean 
+}
+
+export type createNoteProps = {
+    noteTitle: string,
+    setNoteTitle: ActionCreatorWithPayload<string>,
+    addNewNotes:  ActionCreatorWithPayload<NoteType>,
+}
+  
 export const BASE_URL = 'http://localhost:8000'
 
 export const getNextTab = (tabs: TabsType[], tabId: string): TabsType => {
