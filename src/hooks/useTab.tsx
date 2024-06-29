@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NoteType, TabsType } from "../pages/NotePage";
+import { NoteType, TabsType } from "../utils";
 
 import { getNextTab } from "../utils";
 

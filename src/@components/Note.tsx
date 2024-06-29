@@ -1,18 +1,20 @@
 import { MdEdit, MdDelete } from "react-icons/md";
 import { useState } from "react";
+import { deleteNote } from "../features/NoteSlice";
+import { openTab } from "../features/TabSlice";
+import { useAppDispatch } from "../app/store";
 
 
 interface NoteProps {
     id: string;
     title: string;
     isOpen: boolean;
-    openNewTab: (id: string, title: string) => void;
-    deleteNote: (noteId: string) => void,
     onUpdate: (noteId: string, newTitle: string ) => Promise<void>
 }
 
-export const Note = ({id,  title, isOpen, openNewTab, deleteNote,   onUpdate}: NoteProps) => {
+export const Note = ({id,  title, isOpen,   onUpdate}: NoteProps) => {
     
+    const dispatch = useAppDispatch();
     const [newTitle, setNewTitle] = useState<string>(title);
 
     const [edit, setEdit] = useState<boolean>(false);
@@ -30,7 +32,7 @@ export const Note = ({id,  title, isOpen, openNewTab, deleteNote,   onUpdate}: N
                 !edit ? (
                     <span 
                         className="text-[16px]  h-full w-full py-2 cursor-pointer"
-                        onClick = {() => !isOpen && openNewTab(id, title)}
+                        onClick = {() => !isOpen && dispatch(openTab({tabId: id, title}))}
                     >
                         {title}
                     </span>
@@ -68,7 +70,7 @@ export const Note = ({id,  title, isOpen, openNewTab, deleteNote,   onUpdate}: N
         
                         </div>
                         <div  className="px-1 rounded-sm py-1 bg-[#15202B] cursor-pointer"   >
-                            <MdDelete  onClick={() => deleteNote(id)}/>
+                            <MdDelete  onClick={() => dispatch(deleteNote(id))}/>
         
                         </div>              
                     </div>

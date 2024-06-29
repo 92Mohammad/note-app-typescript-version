@@ -2,35 +2,26 @@ import { Note } from "../@components/Note";
 import { TabsBar } from "../@components/TabsBar";
 import { Editor } from "../@components/Editor";
 import { useEffect, useState } from "react";
-import { useNotes } from "../hooks/useNotes";
 import { useSaveContent } from "../hooks/useSaveContent";
 import { useTab } from "../hooks/useTab";
-import { getNextTab, NoteType } from "../utils";
+import { TabsType } from "../utils";
+
 import {
   fetchAllNotes,
   createNewNote,
   setNoteTitle,
   addNewNotes,
+  setNotes,       
 } from "../features/NoteSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../app/store";
+import { useSelector } from "react-redux";
+import {  RootState, useAppDispatch } from "../app/store";
 
-export interface TabsType extends NoteType {
-  selectedTab: boolean;
-  content: string;
-  noteId: string;
-}
+
 
 export const NotePage = () => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { notes, noteTitle } = useSelector((state: RootState) => state.notes);
-  console.log("this is notes; ", notes);
-
-  const { setNotes } = useNotes();
-
-  console.log("rendor");
-  console.log("this is note title: ", noteTitle);
-
+  
   const [selectedTab, setSelectedTab] = useState<TabsType>({
     _id: "",
     title: "",
@@ -57,45 +48,43 @@ export const NotePage = () => {
   }, []);
 
   useEffect(() => {
-    console.log('use effect fire')
     dispatch(fetchAllNotes());
-
   }, [dispatch, addNewNotes]);
 
-  const deleteNote = async (noteId: string) => {
-    try {
-      const res = await fetch("http://localhost:8000/note/delete-note", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: localStorage.getItem("authToken")!,
-        },
-        body: JSON.stringify({ noteId: noteId }),
-      });
-      if (res.ok) {
-        // 1. first update the notes array locally
-        const remainingNote = notes.filter((note) => note._id !== noteId);
-        setNotes(remainingNote);
+  // const deleteNote = async (noteId: string) => {
+  //   try {
+  //     const res = await fetch("http://localhost:8000/note/delete-note", {
+  //       method: "DELETE",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         authorization: localStorage.getItem("authToken")!,
+  //       },
+  //       body: JSON.stringify({ noteId: noteId }),
+  //     });
+  //     if (res.ok) {
+  //       // 1. first update the notes array locally
+  //       const remainingNote = notes.filter((note) => note._id !== noteId);
+  //       setNotes(remainingNote);
 
-        // 2. get the next tab to select
-        const removedTab = tabs.find((tab) => tab.noteId === noteId);
+  //       // 2. get the next tab to select
+  //       const removedTab = tabs.find((tab) => tab.noteId === noteId);
 
-        if (removedTab) {
-          const nextTab = getNextTab(tabs, removedTab._id);
-          if (nextTab._id === "") {
-            setSelectedTab(nextTab);
-          } else {
-            selectNextTab(nextTab, previousId);
-          }
-        }
-        // 3. update the tabs array (remove the tab with noteId === above noteId)
-        const remainingTabs = tabs.filter((tab) => tab.noteId !== noteId);
-        setTabs(remainingTabs);
-      }
-    } catch (error: any) {
-      console.error(error.message);
-    }
-  };
+  //       if (removedTab) {
+  //         const nextTab = getNextTab(tabs, removedTab._id);
+  //         if (nextTab._id === "") {
+  //           setSelectedTab(nextTab);
+  //         } else {
+  //           selectNextTab(nextTab, previousId);
+  //         }
+  //       }
+  //       // 3. update the tabs array (remove the tab with noteId === above noteId)
+  //       const remainingTabs = tabs.filter((tab) => tab.noteId !== noteId);
+  //       setTabs(remainingTabs);
+  //     }
+  //   } catch (error: any) {
+  //     console.error(error.message);
+  //   }
+  // };
 
   const editNoteTitle = async (noteId: string, newTitle: string) => {
     // check if the title with noteId and newTitle are different then only make a backend call otherwise don't
@@ -176,8 +165,6 @@ export const NotePage = () => {
                     key={index}
                     title={note.title}
                     isOpen={note.isOpen!}
-                    openNewTab={openNewTab}
-                    deleteNote={deleteNote}
                     onUpdate={editNoteTitle}
                   />
                 );

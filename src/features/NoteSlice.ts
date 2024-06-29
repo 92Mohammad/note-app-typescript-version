@@ -1,14 +1,19 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { NoteType, BASE_URL, createNoteProps } from "../utils";
+import { RootState } from '../app/store'
+import { getNextTab } from "../utils";
+import { setSelectedTab, selectNextTab, setTabs } from "./TabSlice";
 
 export interface NoteState {
   notes: NoteType[];
   noteTitle: string;
+  previousId: string;
   errors: any;
 }
-const initialState: NoteState = {
+export const initialNoteState: NoteState = {
   notes: [],
   noteTitle: "",
+  previousId: "",
   errors: null,
 };
 
@@ -64,7 +69,50 @@ export const createNewNote = createAsyncThunk(
         }
       }
     } catch (error: any) {
-      console.log(error.message);
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteNote = createAsyncThunk(
+  "/notes/deleteNote",
+  async (noteId: string, thunkAPI) => {
+    try {
+      const res = await fetch(`${BASE_URL}/note/delete-note`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("authToken")!,
+        },
+        body: JSON.stringify({ noteId: noteId }),
+      });
+
+      if (res.ok) {
+        // 1. first update the notes array locally
+        const state = thunkAPI.getState() as RootState;
+        const { notes } = state.notes;
+        console.log('inside delete function: ', notes)
+        const remainingNote = notes.filter((note) => note._id !== noteId);
+        thunkAPI.dispatch(setNotes(remainingNote));
+
+        // 2. get the next tab to select
+        const { tabs } = state.tabs;
+        const removedTab = tabs.find((tab) => tab.noteId === noteId);
+
+        if (removedTab) {
+          const nextTab = getNextTab(tabs, removedTab._id);
+          if (nextTab._id === "") {
+            thunkAPI.dispatch(setSelectedTab(nextTab));
+          } else {
+            const { previousId } = state.notes
+            thunkAPI.dispatch(selectNextTab({nextTab, previousId}));
+          }
+        }
+        // 3. update the tabs array (remove the tab with noteId === above noteId)
+        const remainingTabs = tabs.filter((tab) => tab.noteId !== noteId);
+        thunkAPI.dispatch(setTabs(remainingTabs));
+      }
+    } catch (error: any) {
       return thunkAPI.rejectWithValue(error);
     }
   }
@@ -72,12 +120,14 @@ export const createNewNote = createAsyncThunk(
 
 export const noteSlice = createSlice({
   name: "notes",
-  initialState,
+  initialState: initialNoteState,
   reducers: {
     addNewNotes: (state, action) => {
       state.notes.push(action.payload);
     },
-
+    setNotes: (state, action) => {
+      state.notes = action.payload;
+    },
     setNoteTitle: (state, action): void => {
       state.noteTitle = action.payload;
     },
@@ -86,6 +136,7 @@ export const noteSlice = createSlice({
     builder.addCase(fetchAllNotes.pending, (_, action) => {
       console.log(action.payload);
     });
+
     builder.addCase(fetchAllNotes.fulfilled, (state, action) => {
       const { messageType } = action.payload;
       if (messageType === "success") {
@@ -99,9 +150,10 @@ export const noteSlice = createSlice({
 
     builder.addCase(fetchAllNotes.rejected, (state, action) => {
       state.errors = action.payload;
+      console.log("Errors: ", state.errors);
     });
   },
 });
 
 export default noteSlice.reducer;
-export const { setNoteTitle, addNewNotes } = noteSlice.actions;
+export const { setNoteTitle, addNewNotes, setNotes } = noteSlice.actions;
