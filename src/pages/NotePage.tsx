@@ -1,17 +1,13 @@
 import { Note } from "../@components/Note";
 import { TabsBar } from "../@components/TabsBar";
 import { Editor } from "../@components/Editor";
-import { useEffect, useState } from "react";
-import { useSaveContent } from "../hooks/useSaveContent";
-import { useTab } from "../hooks/useTab";
-import { TabsType } from "../utils";
-
+import { useEffect } from "react";
+import { getTabs, selectNextTab } from "../features/TabSlice";
 import {
   fetchAllNotes,
   createNewNote,
   setNoteTitle,
-  addNewNotes,
-  setNotes,       
+  addNewNotes,  
 } from "../features/NoteSlice";
 import { useSelector } from "react-redux";
 import {  RootState, useAppDispatch } from "../app/store";
@@ -22,30 +18,30 @@ export const NotePage = () => {
   const dispatch = useAppDispatch();
   const { notes, noteTitle } = useSelector((state: RootState) => state.notes);
   
-  const [selectedTab, setSelectedTab] = useState<TabsType>({
-    _id: "",
-    title: "",
-    selectedTab: false,
-    content: "",
-    noteId: "",
-  });
+  // const [selectedTab, setSelectedTab] = useState<TabsType>({
+  //   _id: "",
+  //   title: "",
+  //   selectedTab: false,
+  //   content: "",
+  //   noteId: "",
+  // });
 
-  const [previousId, setPreviousId] = useState<string>("");
+  // const [previousId, setPreviousId] = useState<string>("");
 
-  const { saveContent } = useSaveContent(previousId);
+  // const { saveContent } = useSaveContent(previousId);
 
-  const { tabs, setTabs, getAllTabs, openNewTab, selectNextTab, removeTab } =
-    useTab({
-      setSelectedTab,
-      notes,
-      setNotes,
-      saveContent,
-      previousId,
-    });
+  // const { tabs, setTabs, getAllTabs, selectNextTab, removeTab } =
+  //   useTab({
+  //     setSelectedTab,
+  //     notes,
+  //     setNotes,
+  //     saveContent,
+  //     previousId,
+  //   });
 
   useEffect(() => {
-    getAllTabs();
-  }, []);
+    dispatch(getTabs())
+  }, [dispatch, selectNextTab]);
 
   useEffect(() => {
     dispatch(fetchAllNotes());
@@ -86,44 +82,44 @@ export const NotePage = () => {
   //   }
   // };
 
-  const editNoteTitle = async (noteId: string, newTitle: string) => {
-    // check if the title with noteId and newTitle are different then only make a backend call otherwise don't
-    const note = notes.find((note) => note._id === noteId);
-    if (note && note.title !== newTitle) {
-      try {
-        const res = await fetch(
-          "http://localhost:8000/note/update-note-title",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              authorization: localStorage.getItem("authToken")!,
-            },
-            body: JSON.stringify({
-              noteId: noteId,
-              newTitle: newTitle,
-            }),
-          }
-        );
+  // const editNoteTitle = async (noteId: string, newTitle: string) => {
+  //   // check if the title with noteId and newTitle are different then only make a backend call otherwise don't
+  //   const note = notes.find((note) => note._id === noteId);
+  //   if (note && note.title !== newTitle) {
+  //     try {
+  //       const res = await fetch(
+  //         "http://localhost:8000/note/update-note-title",
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             authorization: localStorage.getItem("authToken")!,
+  //           },
+  //           body: JSON.stringify({
+  //             noteId: noteId,
+  //             newTitle: newTitle,
+  //           }),
+  //         }
+  //       );
 
-        if (res.ok) {
-          // 1. update the title from note array
-          const updatedNoteArray = notes.map((note) =>
-            note._id === noteId ? { ...note, title: newTitle } : note
-          );
-          setNotes(updatedNoteArray);
+  //       if (res.ok) {
+  //         // 1. update the title from note array
+  //         const updatedNoteArray = notes.map((note) =>
+  //           note._id === noteId ? { ...note, title: newTitle } : note
+  //         );
+  //         setNotes(updatedNoteArray);
 
-          // 2. update the title from tab array
-          const updatedTabsArray = tabs.map((tab) =>
-            tab.noteId === noteId ? { ...tab, title: newTitle } : tab
-          );
-          setTabs(updatedTabsArray);
-        }
-      } catch (error: any) {
-        console.log(error.message);
-      }
-    }
-  };
+  //         // 2. update the title from tab array
+  //         const updatedTabsArray = tabs.map((tab) =>
+  //           tab.noteId === noteId ? { ...tab, title: newTitle } : tab
+  //         );
+  //         setTabs(updatedTabsArray);
+  //       }
+  //     } catch (error: any) {
+  //       console.log(error.message);
+  //     }
+  //   }
+  // };
 
   return (
     <>
@@ -165,7 +161,6 @@ export const NotePage = () => {
                     key={index}
                     title={note.title}
                     isOpen={note.isOpen!}
-                    onUpdate={editNoteTitle}
                   />
                 );
               })}
@@ -174,21 +169,9 @@ export const NotePage = () => {
         </section>
 
         <section className="fixed top-0 bottom-0 left-60 right-0 flex flex-col bg-gray-900">
-          <TabsBar
-            tabs={tabs}
-            selectedTab={selectedTab}
-            selectNextTab={selectNextTab}
-            removeTab={removeTab}
-            previousId={previousId}
-          />
+          <TabsBar />
           <div className="text-white px-4 py-2 fixed top-10 bottom-0 left-60 right-0">
-            <Editor
-              selectedTab={selectedTab}
-              setSelectedTab={setSelectedTab}
-              tabs={tabs}
-              setTabs={setTabs}
-              setPreviousId={setPreviousId}
-            />
+            <Editor/>
           </div>
         </section>
       </main>

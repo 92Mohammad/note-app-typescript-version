@@ -1,24 +1,30 @@
-import { TabsType } from '../pages/NotePage'
+import { setSelectedTab, setTabs } from '../features/TabSlice';
+import { useAppDispatch, RootState } from '../app/store';
+import { useSelector } from 'react-redux';
+import { setPreviousId } from '../features/NoteSlice';
 
 
-interface EditorProps {
-    selectedTab: TabsType;
-    setSelectedTab: React.Dispatch<React.SetStateAction<TabsType>>
-    tabs: TabsType[];
-    setTabs: React.Dispatch<React.SetStateAction<TabsType[]>>
-    setPreviousId:  React.Dispatch<React.SetStateAction<string>>
-}
+// interface EditorProps {
+//     selectedTab: TabsType;
+//     setSelectedTab: React.Dispatch<React.SetStateAction<TabsType>>
+//     tabs: TabsType[];
+//     setTabs: React.Dispatch<React.SetStateAction<TabsType[]>>
+//     setPreviousId:  React.Dispatch<React.SetStateAction<string>>
+// }
 
 
-export const Editor = ({selectedTab, setSelectedTab, tabs, setTabs, setPreviousId}: EditorProps) => {
-    
+export const Editor = () => {
+    const dispatch = useAppDispatch();
+    const { tabs , selectedTab} = useSelector((state: RootState) => state.tabs)
+
     const handleContent = (content: string)=> {
-        setPreviousId(selectedTab._id)
+        dispatch(setPreviousId(selectedTab._id))
         // 1. first set the content of tabs 
-        setTabs(tabs.map(tab => tab._id === selectedTab._id ? {...tab, content: content}: tab))
+        const updatedTabArray = tabs.map(tab => tab._id === selectedTab._id ? {...tab, content: content}: tab);
+        dispatch(setTabs(updatedTabArray));
 
         // 2. set the selectedTab content property over here
-        setSelectedTab({...selectedTab, content: content});
+        dispatch(setSelectedTab({...selectedTab, content: content}));
 
     }
     

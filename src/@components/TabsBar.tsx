@@ -1,20 +1,10 @@
 import { Tab } from "./Tab"
-import { TabsType } from "../pages/NotePage"
+import { useSelector } from "react-redux"
+import { RootState } from "../app/store";
 
 
-interface TabBarProps {
-    tabs: TabsType[],
-    selectedTab: TabsType;
-    selectNextTab: (tab: TabsType, previousId: string) => Promise<void>
-    removeTab: (id: string) => Promise<void>,
-    previousId: string
-
-}
-
-
-
-export const TabsBar = ({tabs, selectedTab,  selectNextTab, removeTab, previousId }: TabBarProps) => {
-  
+export const TabsBar = () => {
+    const { tabs } = useSelector((state: RootState) => state.tabs)
     
     return (
         <div className = 'flex items-center bg-gray-800 fixed top-0 left-60 right-0'>
@@ -24,10 +14,7 @@ export const TabsBar = ({tabs, selectedTab,  selectNextTab, removeTab, previousI
                         key = {index}
                         id = {tab._id}
                         tab = {tab}
-                        selectedTab = {selectedTab}
-                        onSelect = {() => selectNextTab(tab, previousId)}
-                        title = {tab.title}
-                        onRemove = {removeTab}
+                        title = {tab.title}  
                     />
                 })
             }

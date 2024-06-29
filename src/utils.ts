@@ -32,6 +32,15 @@ export interface selectNextTabParameter{
     previousId: string
 }
   
+export interface saveContentParameter {
+    tabs: TabsType[],
+    previousId: string
+}
+
+export interface editNoteTitleParameter {
+    noteId: string;
+    newTitle: string
+}
 export const BASE_URL = 'http://localhost:8000'
 
 export const getNextTab = (tabs: TabsType[], tabId: string): TabsType => {

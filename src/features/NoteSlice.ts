@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { NoteType, BASE_URL, createNoteProps } from "../utils";
 import { RootState } from '../app/store'
-import { getNextTab } from "../utils";
+import { getNextTab, editNoteTitleParameter } from "../utils";
 import { setSelectedTab, selectNextTab, setTabs } from "./TabSlice";
 
 export interface NoteState {
@@ -118,6 +118,49 @@ export const deleteNote = createAsyncThunk(
   }
 );
 
+export const editNoteTitle = createAsyncThunk('/notes/editNoteTitle', async({noteId, newTitle}: editNoteTitleParameter, thunkAPI) => {
+  const state = thunkAPI.getState() as RootState;
+  const { notes } = state.notes;
+  const note = notes.find((note) => note._id === noteId);
+  if (note && note.title !== newTitle) {
+    try {
+      const res = await fetch(
+        `${BASE_URL}/note/update-note-title`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: localStorage.getItem("authToken")!,
+          },
+          body: JSON.stringify({
+            noteId: noteId,
+            newTitle: newTitle,
+          }),
+        }
+      );
+
+      if (res.ok) {
+        // 1. update the title from note array
+        const updatedNoteArray = notes.map((note) =>
+          note._id === noteId ? { ...note, title: newTitle } : note
+        );
+        thunkAPI.dispatch(setNotes(updatedNoteArray));
+
+        // 2. update the title from tab array
+        const { tabs} = state.tabs;
+        const updatedTabsArray = tabs.map((tab) =>
+          tab.noteId === noteId ? { ...tab, title: newTitle } : tab
+        );
+        thunkAPI.dispatch(setTabs(updatedTabsArray));
+      }
+    } catch (error: any) {
+      console.log(error.message);
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+
+})
+
 export const noteSlice = createSlice({
   name: "notes",
   initialState: initialNoteState,
@@ -131,6 +174,9 @@ export const noteSlice = createSlice({
     setNoteTitle: (state, action): void => {
       state.noteTitle = action.payload;
     },
+    setPreviousId: (state, action) => {
+      state.previousId = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAllNotes.pending, (_, action) => {
@@ -156,4 +202,4 @@ export const noteSlice = createSlice({
 });
 
 export default noteSlice.reducer;
-export const { setNoteTitle, addNewNotes, setNotes } = noteSlice.actions;
+export const { setNoteTitle, addNewNotes, setNotes, setPreviousId } = noteSlice.actions;
