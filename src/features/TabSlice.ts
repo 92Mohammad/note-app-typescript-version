@@ -43,11 +43,13 @@ export const getTabs = createAsyncThunk(
 
       if (res.ok) {
         const allOpenTabs = await res.json();
-        const selectedTab = allOpenTabs.find(
-          (tab: TabsType) => tab.selectedTab
-        );
-        thunkAPI.dispatch(setSelectedTab(selectedTab));
+        console.log("tabs recieved from server : ", allOpenTabs);
+        // const selectedTab = allOpenTabs.find((tab: TabsType) => tab.selectedTab);
+
+        
+        // thunkAPI.dispatch(setSelectedTab(selectedTab));
         thunkAPI.dispatch(setTabs(allOpenTabs));
+        
       }
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error);
@@ -87,14 +89,15 @@ export const openTab = createAsyncThunk(
           };
         });
         // 3. create new tab
-        const newTab = data.tab;
-        // 4. setSelcted tab to newTab
-        thunkAPI.dispatch(setSelectedTab(newTab));
+        const allTabs = data.tabs;
+        thunkAPI.dispatch(setTabs(allTabs));
+        // // 4. setSelcted tab to newTab
+        // thunkAPI.dispatch(setSelectedTab(newTab));
 
-        // 4. push the newTab into updatedTab
-        updatedTab.push(newTab);
-        // 5. and then setTab() to updatedTab
-        thunkAPI.dispatch(setTabs(updatedTab));
+        // // 4. push the newTab into updatedTab
+        // updatedTab.push(newTab);
+        // // 5. and then setTab() to updatedTab
+        // thunkAPI.dispatch(setTabs(updatedTab));
       }
     } catch (error: any) {
       console.log(error.message);
@@ -107,7 +110,7 @@ export const selectNextTab = createAsyncThunk(
   "/tabs/selectNewTab",
   async (data: selectNextTabParameter, thunkAPI) => {
     const { nextTab, previousId } = data;
-    console.log('data in selectNext tab: ', data)
+
     const state = thunkAPI.getState() as RootState;
     const { tabs } = state.tabs;
 
@@ -134,6 +137,7 @@ export const selectNextTab = createAsyncThunk(
 
           const tab = tabs.find((tab) => tab._id === nextTab._id);
           if (tab) {
+            console.log('next tab: ', nextTab)
             thunkAPI.dispatch(setSelectedTab({
               ...nextTab,
               content: tab.content,
@@ -235,13 +239,18 @@ export const tabSlice = createSlice({
     setTabs: (state, action) => {
       console.log("all tabs: ", action.payload);
       state.tabs = action.payload;
+      console.log('after setting the tabs: ', state.tabs);
     },
     setSelectedTab: (state, action) => {
       console.log("new selected tab : ", action.payload);
       state.selectedTab = action.payload;
+      console.log('after selection of tab: ', state.selectedTab )
     },
+    onOpenSetTab: (state, action) => {
+
+    }
   },
-  extraReducers: (builder) => {},
+  
 });
 
 export default tabSlice.reducer;

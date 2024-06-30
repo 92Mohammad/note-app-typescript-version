@@ -2,7 +2,7 @@ import { Note } from "../@components/Note";
 import { TabsBar } from "../@components/TabsBar";
 import { Editor } from "../@components/Editor";
 import { useEffect } from "react";
-import { getTabs, selectNextTab } from "../features/TabSlice";
+import { getTabs, selectNextTab, setTabs} from "../features/TabSlice";
 import {
   fetchAllNotes,
   createNewNote,
@@ -21,7 +21,7 @@ export const NotePage = () => {
 
   useEffect(() => {
     dispatch(getTabs())
-  }, [dispatch, selectNextTab]);
+  }, [dispatch, selectNextTab, setTabs]);
 
   useEffect(() => {
     dispatch(fetchAllNotes());

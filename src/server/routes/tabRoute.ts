@@ -12,7 +12,7 @@ router.get('/get-all-tabs',auth,  async(req, res) => {
     try {
         const userId = req.headers["userId"];
 
-       const allOpenTabs = await Tabs.find(
+        const allOpenTabs = await Tabs.find(
            {userId: userId},
            {userId: 0}
         )
@@ -65,15 +65,22 @@ router.post('/createNewTab', auth,  async(req, res) => {
                         userId: userId
                     }
                 )
+                
                 if (newTab){
-                    const tab = {
-                        _id: newTab._id,
-                        title: newTab.title,
-                        selectedTab: newTab.selectedTab,
-                        content: newTab.content,
-                        noteId: newTab.noteId
-                    }
-                    return res.status(201).json({message: 'New tab created', tab})
+                    const allOpenTabs = await Tabs.find(
+                        {userId: userId},
+                        {userId: 0}
+                    )
+                    console.log('all tabs : ', allOpenTabs)
+
+                    // const tab = {
+                    //     _id: newTab._id,
+                    //     title: newTab.title,
+                    //     selectedTab: newTab.selectedTab,
+                    //     content: newTab.content,
+                    //     noteId: newTab.noteId
+                    // }
+                    return res.status(201).json({message: 'New tab created', tabs: allOpenTabs})
                 }
                 else {
                     return res.status(402).json({message: 'tab selection failed!!'})
