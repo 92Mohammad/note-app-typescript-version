@@ -4,14 +4,6 @@ import { useSelector } from 'react-redux';
 import { setPreviousId } from '../features/NoteSlice';
 
 
-// interface EditorProps {
-//     selectedTab: TabsType;
-//     setSelectedTab: React.Dispatch<React.SetStateAction<TabsType>>
-//     tabs: TabsType[];
-//     setTabs: React.Dispatch<React.SetStateAction<TabsType[]>>
-//     setPreviousId:  React.Dispatch<React.SetStateAction<string>>
-// }
-
 
 export const Editor = () => {
     const dispatch = useAppDispatch();

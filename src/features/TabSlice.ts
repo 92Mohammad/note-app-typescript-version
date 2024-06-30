@@ -6,7 +6,7 @@ import {
   selectNextTabParameter,
   saveContentParameter
 } from "../utils";
-import { setNotes, initialNoteState } from "./NoteSlice";
+import { setNotes } from "./NoteSlice";
 import { RootState } from "../app/store";
 import { getNextTab } from "../utils";
 
@@ -70,16 +70,15 @@ export const openTab = createAsyncThunk(
       });
       if (res.ok) {
         const data = await res.json();
-
+        const state = thunkAPI.getState() as RootState;
         // 1. make isOpen property of note as true
-        const notes = initialNoteState.notes;
-        const updatedNoteArray = notes.map((note) =>
-          note._id === tabId ? { ...note, isOpen: true } : note
-        );
+        const { notes } = state.notes;
+        console.log('this is notes inside open tab: ', notes);
+        const updatedNoteArray = notes.map((note) =>note._id === tabId ? { ...note, isOpen: true } : note);
         thunkAPI.dispatch(setNotes(updatedNoteArray));
 
         // 2. first set selectedTab property of all tab false
-        const state = thunkAPI.getState() as RootState;
+        
         const { tabs } = state.tabs;
         const updatedTab = tabs.map((tab) => {
           return {

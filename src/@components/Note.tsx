@@ -18,8 +18,6 @@ export const Note = ({id,  title, isOpen}: NoteProps) => {
 
     const [edit, setEdit] = useState<boolean>(false);
     
-
-  
     const handleUpdateTitle = () => {
         setEdit(prevEdit => !prevEdit)
         dispatch(editNoteTitle({noteId: id, newTitle}))
