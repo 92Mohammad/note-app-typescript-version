@@ -33,7 +33,7 @@ export const getTabs = createAsyncThunk(
   "/tabs/getTabs",
   async (_, thunkAPI) => {
     try {
-      const res = await fetch(`${BASE_URL}/tab/get-all-tabs`, {
+      const res = await fetch(`${BASE_URL}/tab/getTabs`, {
         method: "GET",
         headers: {
           "Content-Type": "applocation/json",

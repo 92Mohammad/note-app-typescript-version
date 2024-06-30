@@ -3,8 +3,7 @@ import {  Login,  SignUp } from '../server/routes/userRoute'
 
 
 interface TabInput {
-    noteId: string,
-    title: string
+    noteId: string
 }
 const LoginInput = z.object({
     username: string().min(3).max(15),
@@ -35,7 +34,6 @@ export const validateLoginInput = (input: Login) => {
 export const validateTabInput = (tabInput: TabInput) => {
     const parsedData = createTabInput.safeParse(tabInput);
     return parsedData;
-    
 }
 
 export const env = z.object({

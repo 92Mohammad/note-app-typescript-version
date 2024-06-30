@@ -1,24 +1,22 @@
 import express from 'express'
 const router = express.Router();
 import auth from '../middleware/jwtAuthenticate'
-import Tabs from "../models/tab.model";
-import Note from '../models/note.model';
+import Notes from '../models/note.model';
 import { validateTabInput } from '../inputValidation';
 
 
 
-router.get('/get-all-tabs',auth,  async(req, res) => {
+router.get('/getTabs',auth,  async(req, res) => {
 
     try {
         const userId = req.headers["userId"];
 
-        const allOpenTabs = await Tabs.find(
-           {userId: userId},
-           {userId: 0}
+        const allOpenTabs = await Notes.find(
+           {userId: userId , isOpen: true},
+           {userId: 0, isOpen: 0}
         )
 
         if (allOpenTabs){
-            
             return res.status(200).json( allOpenTabs );
         }
         return res.status(402).json({ message: 'Open tabs not found'})
@@ -39,56 +37,35 @@ router.post('/createNewTab', auth,  async(req, res) => {
         if (!parsedData.success){
             return res.status(411).json({error: parsedData.error})
         }
-        const {noteId, title} = parsedData.data;
+        const {noteId} = parsedData.data;
         
-        const isTabOpen = await Note.findByIdAndUpdate(
-            {_id: noteId}, 
-            {$set: {isOpen: true}},
-            {new: true}
-
-        )
-
-        if (isTabOpen){
-            const makeAllSelectedTabFalse = await Tabs.updateMany(
-                {},
-                {$set: {selectedTab: false}}
-            )
-            if(makeAllSelectedTabFalse){
-
-                // create a new tab
-                const newTab = await Tabs.create(
-                    {
-                        title: title,
-                        selectedTab: true,
-                        content: isTabOpen.content,
-                        noteId: noteId,
-                        userId: userId
+        const isTabOpen = await Notes.updateMany(
+            {}, 
+            { 
+                $cond: {
+                    if: {
+                        $eq: {_id: noteId}
+                    },
+                    then: {
+                        $set: {isSelected: true, isOpen: true}
+                    },
+                    else: {
+                        $set: {isSelected: false}
                     }
-                )
-                
-                if (newTab){
-                    const allOpenTabs = await Tabs.find(
-                        {userId: userId},
-                        {userId: 0}
-                    )
-                    console.log('all tabs : ', allOpenTabs)
-
-                    // const tab = {
-                    //     _id: newTab._id,
-                    //     title: newTab.title,
-                    //     selectedTab: newTab.selectedTab,
-                    //     content: newTab.content,
-                    //     noteId: newTab.noteId
-                    // }
-                    return res.status(201).json({message: 'New tab created', tabs: allOpenTabs})
                 }
-                else {
-                    return res.status(402).json({message: 'tab selection failed!!'})
 
-                }
-            }
+            },
+            {multi: true},
+        )
+        console.log('is tab open: ', isTabOpen);
+        if (isTabOpen){
+            const updateTabs = await Notes.find(
+                {userId: userId , isOpen: true},
+                {userId: 0, isOpen: 0}
+            )
+            return res.status(201).json({message: "Tab created successfully", tabs: updateTabs})
         }
-        return res.status(402).json({message: "error in creating new tab"});
+        return res.status(402).json({err: "error in creating new tab"});
     }
     catch(error: any) {
         console.log(error.message);
@@ -100,46 +77,60 @@ router.post('/createNewTab', auth,  async(req, res) => {
 
 router.post('/remove-tab', auth, async (req, res) => {
     try {
-        const { tabId } = req.body
-        console.log('remove tab route hit')
-
-        // first save the conttent of tabId into noteId
-        const tab = await Tabs.findOne({_id: tabId}, {content: 1, noteId: 1,  _id: 0})
-
-        if (tab){
-            // save the tab content into Note collection
-            const note = await Note.findByIdAndUpdate({_id: tab.noteId}, {$set: {content: tab.content, isOpen: false}})
-            if (note){
-                const closeTab = await Tabs.deleteOne({_id: tabId} )
-                if (closeTab){
-                    return res.status(200).json({message: 'Tab closed successfully'})
-                }
-
-            }
-        }        
+        const { noteId, previousId, content } = req.body;
+        const removeTab = await Notes.findByIdAndUpdate(
+            {_id: noteId},
+            {$set: {isOpen: false, isSelected: false, content: content}}
+        )
+        if (removeTab){
+            if (noteId !== previousId && previousId !== ""){
+                await Notes.findByIdAndUpdate({_id: previousId}, {$set: {isSelected: true}})
+            }   
+            return res.status(200).json({message: "Tab close successfully"})
+        }
+              
         return res.status(402).json({message: "Could not close tab"});
     }
     catch(error: any) {
         return res.status(500).json({error: error.message})
     }
- })
+})
 
 // setCurrentTab
 router.post('/select-next-tab',  async(req, res) => {
     try {
-        const { tabId, previousTabId } = req.body;
-
-
+        const { tabId, previousTabId, content } = req.body;
+        
         // first make seletecTab property of all tab false
-        const makeSelectedTabFalse = await Tabs.updateMany({}, {$set: {selectedTab: false}});
-        if (makeSelectedTabFalse){
-            // now select the current tab with tab id = tabId
-            const makeAsSelected = await Tabs.findByIdAndUpdate({_id: tabId}, {$set: {selectedTab: true}},  {new: true});
-            if (makeAsSelected){
-                return res.status(201).json({ message: 'tab selected successfully'});
+        const updateSelectionProperty = await Notes.updateMany(
+            {},
+            {
+                $cond: {
+                    if: {
+                        $eq: {_id: tabId},
+                    },
+                    then: {
+                        $set:  {selectedTab: true}
+                    },
+                    else: {
+                        $set:  {selectedTab: false}
+                    }
+
+                }
             }
-            return res.status(402).json({message: 'could not select the tab'})
+        )
+        if ( updateSelectionProperty ){
+            // save the content where noteId == previousId
+            if (previousTabId !== ""){
+                await Notes.findByIdAndUpdate(
+                    {_id: previousTabId},
+                    {$set: {content: content}},
+                );
+
+            }
+            return res.status(201).json({ message: 'tab selected successfully'}); 
         }
+        return res.status(402).json({message: 'could not select the tab'})
     }
     catch(error: any) {
         return res.status(500).json({error: error.message})
@@ -147,37 +138,37 @@ router.post('/select-next-tab',  async(req, res) => {
 })
 
 
-router.post('/save-content', async(req, res) => {
-    try {
-        const{tabId, content} = req.body;
+// router.post('/save-content', async(req, res) => {
+//     try {
+//         const{tabId, content} = req.body;
         
-        const tab = await Tabs.findById({_id: tabId}, {noteId: 1, _id: 0})
+//         const tab = await Tabs.findById({_id: tabId}, {noteId: 1, _id: 0})
 
-        if (tab){
-            // first save the content in to Note collection
-            const saveInNoteCollection = await Note.findByIdAndUpdate({_id: tab.noteId}, {$set: {content: content}})        
-            if (saveInNoteCollection){
+//         if (tab){
+//             // first save the content in to Note collection
+//             const saveInNoteCollection = await Note.findByIdAndUpdate({_id: tab.noteId}, {$set: {content: content}})        
+//             if (saveInNoteCollection){
                 
-                // find by id and update
-                const isContentSaved = await Tabs.findByIdAndUpdate(
-                    {_id: tabId}, 
-                    {$set: {content: content}
-                })
+//                 // find by id and update
+//                 const isContentSaved = await Tabs.findByIdAndUpdate(
+//                     {_id: tabId}, 
+//                     {$set: {content: content}
+//                 })
 
-                if(isContentSaved){
-                    return res.status(201).json("Content saved successfully")
-                }
-                else {
-                    return res.json('Failed to save the content')
-                }
-            }
+//                 if(isContentSaved){
+//                     return res.status(201).json("Content saved successfully")
+//                 }
+//                 else {
+//                     return res.json('Failed to save the content')
+//                 }
+//             }
 
-        }
+//         }
 
-    }
-    catch(error: any){
-        console.log(error.message)
-    }
-})
+//     }
+//     catch(error: any){
+//         console.log(error.message)
+//     }
+// })
 export default router;
 
