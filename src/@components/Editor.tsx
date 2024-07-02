@@ -1,7 +1,7 @@
-import { setSelectedTab, setTabs } from '../features/TabSlice';
+import { setTabs } from '../features/TabSlice';
 import { useAppDispatch, RootState } from '../app/store';
 import { useSelector } from 'react-redux';
-import { setPreviousId } from '../features/NoteSlice';
+import { setPreviousId } from '../features/TabSlice';
 import ReactQuill from 'react-quill';
 import "react-quill/dist/quill.snow.css";
 
@@ -9,16 +9,19 @@ import "react-quill/dist/quill.snow.css";
 
 export const Editor = () => {
     const dispatch = useAppDispatch();
-    const { tabs , selectedTab} = useSelector((state: RootState) => state.tabs)
+    const { tabs } = useSelector((state: RootState) => state.tabs)
+    const findTab = tabs.find(tab => tab.isSelected);
 
     const handleContent = (content: string)=> {
-        dispatch(setPreviousId(selectedTab._id))
+        // dispatch(setPreviousId(selectedTab._id))
         // 1. first set the content of tabs 
-        const updatedTabArray = tabs.map(tab => tab._id === selectedTab._id ? {...tab, content: content}: tab);
+        const updatedTabArray = tabs.map(tab => tab.isSelected ? {...tab, content: content}: tab);
         dispatch(setTabs(updatedTabArray));
+        console.log('updated tabs: ', tabs)
+
 
         // 2. set the selectedTab content property over here
-        dispatch(setSelectedTab({...selectedTab, content: content}));
+        // dispatch(setSelectedTab({...selectedTab, content: content}));
 
     }
     
@@ -27,7 +30,7 @@ export const Editor = () => {
             <ReactQuill
                 style = {{height: '695px'}}
                 className="editor"        
-                value={selectedTab &&  selectedTab.content }
+                value={findTab && findTab.content }
                 onChange={(value) => handleContent(value) }
                 modules={{
                     toolbar: [

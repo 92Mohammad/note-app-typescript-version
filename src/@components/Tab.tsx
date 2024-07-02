@@ -1,6 +1,6 @@
 import { RxCross2 } from "react-icons/rx";
 import { TabsType } from '../utils'
-import { selectNextTab, removeTab } from "../features/TabSlice";
+import { selectNextTab, removeTab, setPreviousId } from "../features/TabSlice";
 import { RootState, useAppDispatch } from "../app/store";
 import { useSelector } from "react-redux";
 
@@ -11,20 +11,27 @@ interface TabProps {
     id: string;
     title: string;
     tab: TabsType;
+    isSelected: boolean 
 }
 
-export const Tab = ({id, title, tab}: TabProps) => {
+export const Tab = ({id, title, tab, isSelected}: TabProps) => {
     const dispatch = useAppDispatch();
-    const { previousId } = useSelector((state: RootState) => state.notes);
-    const { selectedTab } = useSelector((state: RootState) => state.tabs);
-    console.log('this is selected tab: ', selectedTab);
+    const { previousId, tabs } = useSelector((state: RootState) => state.tabs);
+
+    const handleSelectTab = () => {
+        const previousSelectedTab = tabs.find(tab => tab.isSelected);
+        console.log('previous tab id in Tab component: ' , previousSelectedTab && previousSelectedTab._id)
+        dispatch(setPreviousId(previousSelectedTab && previousSelectedTab._id));
+        dispatch(selectNextTab(tab))
+
+    }
     
 
     return (
-        <div className={`${selectedTab && selectedTab._id === id ? " bg-gray-900" : "bg-gray-700 "} flex items-center gap-2 px-2  justify-between h-9 cursor-pointer  border-r`} >
+        <div className={`${isSelected ? " bg-gray-900" : "bg-gray-700 "} flex items-center gap-2 px-2  justify-between h-9 cursor-pointer  border-r`} >
             <span 
                 className="text-white h-full flex items-center text-[16px]  px-4"
-                onClick={() => dispatch(selectNextTab({nextTab: tab, previousId}))}
+                onClick={() => handleSelectTab()}
                 >
                     {title}
                 </span>

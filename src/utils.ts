@@ -12,10 +12,10 @@ export interface NoteType {
     isOpen?: boolean 
 }
 export interface TabsType extends NoteType {
-    selectedTab: boolean;
+    isSelected: boolean;
     content: string;
-    noteId: string;
-  }
+    previousId: string
+}
 
 export type createNoteProps = {
     noteTitle: string,
@@ -49,11 +49,11 @@ export const getNextTab = (tabs: TabsType[], tabId: string): TabsType => {
     const nullValues:TabsType = {
         _id: '',
         title: '',
-        selectedTab: false,
+        isSelected: false,
         content: '',
-        noteId: ""
+        previousId: ""
     } 
-    if (tab && tab.selectedTab){
+    if (tab && tab.isSelected){
         if(indexOfTab == 0 && tabs.length > 1) {
             // selectNextTab(tabs[indexOfTab + 1], previousId);
                 return tabs[indexOfTab + 1];

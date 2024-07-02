@@ -12,9 +12,9 @@ router.get('/getAllNotes', auth, async(req: Request, res: Response) => {
         
         const notes = await Notes.find(
             { userId: userId},
-            {_id: 1, title: 1, isOpen: 1, userId: 0}
+            {_id: 1, title: 1, isOpen: 1}
         ) 
-        console.log('all notes: ', notes);
+        
         
         if (notes.length !== 0){
             return res.status(200).json({messageType: 'success', notes} )

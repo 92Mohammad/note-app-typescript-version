@@ -29,7 +29,7 @@ export const Note = ({id,  title, isOpen}: NoteProps) => {
                 !edit ? (
                     <span 
                         className="text-[16px]  h-full w-full py-2 cursor-pointer"
-                        onClick = {() => !isOpen && dispatch(openTab({tabId: id, title}))}
+                        onClick = {() => !isOpen && dispatch(openTab(id))}
                     >
                         {title}
                     </span>

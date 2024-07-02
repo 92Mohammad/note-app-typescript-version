@@ -21,7 +21,7 @@ export const NotePage = () => {
 
   useEffect(() => {
     dispatch(getTabs())
-  }, [dispatch, selectNextTab, setTabs]);
+  }, []);
 
   useEffect(() => {
     dispatch(fetchAllNotes());
