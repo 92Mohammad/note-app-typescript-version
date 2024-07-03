@@ -1,6 +1,6 @@
 import { RxCross2 } from "react-icons/rx";
 import { TabsType } from '../utils'
-import { selectNextTab, removeTab, setPreviousId } from "../features/TabSlice";
+import { selectNextTab, removeTab } from "../features/TabSlice";
 import { RootState, useAppDispatch } from "../app/store";
 import { useSelector } from "react-redux";
 
@@ -16,15 +16,22 @@ interface TabProps {
 
 export const Tab = ({id, title, tab, isSelected}: TabProps) => {
     const dispatch = useAppDispatch();
-    const { previousId, tabs } = useSelector((state: RootState) => state.tabs);
+    const { tabs } = useSelector((state: RootState) => state.tabs);
 
     const handleSelectTab = () => {
         const previousSelectedTab = tabs.find(tab => tab.isSelected);
-        console.log('previous tab id in Tab component: ' , previousSelectedTab && previousSelectedTab._id)
-        dispatch(setPreviousId(previousSelectedTab && previousSelectedTab._id));
-        dispatch(selectNextTab(tab))
-
+        console.log('previous selected tab:  ' , previousSelectedTab)
+        if(previousSelectedTab){
+            dispatch(selectNextTab({
+                nextTab: tab,
+                previousTabId: previousSelectedTab._id,
+                previousTabContent: previousSelectedTab?.content 
+            }))
+        }
     }
+    // const handleSelectAndRemove  = (action: ) => {
+
+    // }
     
 
     return (
@@ -36,7 +43,7 @@ export const Tab = ({id, title, tab, isSelected}: TabProps) => {
                     {title}
                 </span>
             <div className="flex items-center hover:bg-gray-500 px-0.5 py-0.5 hover:rounded-sm cursor-pointer  ">
-                <RxCross2  onClick = {() => dispatch(removeTab(id))}/> 
+                <RxCross2  onClick = {() => dispatch(removeTab(tab))}/> 
             </div>
 
         </div>

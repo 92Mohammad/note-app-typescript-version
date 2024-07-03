@@ -40,7 +40,6 @@ router.post('/createNewTab', auth,  async(req, res) => {
         // }
         // const {noteId} = parsedData.data;
         const { noteId} = req.body;
-        console.log('create new tab route hit')
 
         
         // first make isSelected property for all open tab = false
@@ -49,21 +48,17 @@ router.post('/createNewTab', auth,  async(req, res) => {
             {$set: {isSelected: false}},
             {new: true}
         )
-        console.log('mark false: ', makeIsSelecetedFalse);
         if (makeIsSelecetedFalse.acknowledged){
             // now make isOpen = true & isSelected = true where _id = noteId
             const openAndSelectTab = await Notes.updateOne(
                 {_id: noteId, userId: userId},
                 {$set: {isOpen: true, isSelected: true}}
             );
-
-            console.log('tab open and selected: ', openAndSelectTab);
             if (openAndSelectTab.acknowledged){
                 const updateTabs = await Notes.find(
                     {userId: userId , isOpen: true},
                     {userId: 0, isOpen: 0, __v: 0}
                 )
-                console.log('updated tab is: ', updateTabs);
                 return res.status(201).json({message: "Tab created successfully", tabs: updateTabs})
             }
             
@@ -80,24 +75,54 @@ router.post('/createNewTab', auth,  async(req, res) => {
 
 router.post('/remove-tab', auth, async (req, res) => {
     const userId = req.headers["userId"];
-
+    const { tabId, nextTabId, content } = req.body;
     try {
-        const { noteId, previousTabId, content } = req.body;
-        const removeTab = await Notes.findByIdAndUpdate(
-            {_id: noteId},
-            {$set: {isOpen: false, isSelected: false, content: content}}
+
+        if (nextTabId && content){
+            // menas that we are going to remove current working tab
+            // 1. remove tab and  save content
+            const removeTabAndSaveContent = await Notes.findByIdAndUpdate(
+                {_id: tabId},
+                {$set: {isOpen: false, isSelected: false, content: content}},
+                {new: true}
+            )
+            
+            if (removeTabAndSaveContent){
+                // 2. select next tab
+                const selectNewTab = await Notes.updateOne(
+                    {_id: nextTabId},
+                    {$set: {isSelected: true}},
+                    {new: true}
+                ) 
+                if(selectNewTab.acknowledged){
+                    const updatedTabs = await Notes.find(
+                        {userId: userId, isOpen: true},
+                        {userId: 0, isOpen: 0, __v: 0}     
+                    )
+                    return res.status(200).json({message: "Tab close successfully", updatedTabs})
+                }        
+
+                
+            }
+        }
+        // otherwise we are going to delete the another tab which is not the current tab
+        // so we dont't need to save the content and don't need to select new tab
+        // only need to remove the tab 
+        const removeTab = await Notes.updateOne(
+            {_id: tabId},
+            {$set: {isOpen: false}},
+            {new: true}
         )
-        if (removeTab){
-            if (noteId !== previousTabId && previousTabId !== ""){
-                await Notes.findByIdAndUpdate({_id: previousTabId}, {$set: {isSelected: true}})
-            }   
+        if(removeTab.acknowledged){
             const updatedTabs = await Notes.find(
                 {userId: userId, isOpen: true},
                 {userId: 0, isOpen: 0, __v: 0}     
             )
+            console.log('after last tab removed: ', updatedTabs)
             return res.status(200).json({message: "Tab close successfully", updatedTabs})
         }
-              
+        
+       
         return res.status(402).json({message: "Could not close tab"});
     }
     catch(error: any) {
@@ -109,12 +134,7 @@ router.post('/remove-tab', auth, async (req, res) => {
 router.post('/select-next-tab',  auth, async(req, res) => {
     const userId = req.headers["userId"];
     try {
-        const { tabId, previousTabId, content } = req.body;
-        console.log('content : ', content);
-
-        
-        // first make seletecTab property of all tab false
-          
+        const { tabId, previousTabId, content } = req.body;  
         // first make isSelected property for all open tab = false
         
         const makeIsSelecetedFalse = await Notes.updateMany(
@@ -122,14 +142,13 @@ router.post('/select-next-tab',  auth, async(req, res) => {
             {$set: {isSelected: false}},
             {new: true}
         )
-        console.log('make false false: ', makeIsSelecetedFalse)
+        
         if (makeIsSelecetedFalse.acknowledged){
             const selectNextTab = await Notes.updateOne(
                 {_id: tabId, userId: userId},
                 {$set: {isSelected: true}},
                 {new: true}
             )
-            console.log('after selecting next tab :', selectNextTab)
             if (selectNextTab.acknowledged){
 
                 // save the content where noteId == previousId

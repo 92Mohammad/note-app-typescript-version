@@ -1,6 +1,6 @@
 import { MdEdit, MdDelete } from "react-icons/md";
 import { useState } from "react";
-import { deleteNote, editNoteTitle } from "../features/NoteSlice";
+import { deleteNote, updateTitle } from "../features/NoteSlice";
 import { openTab } from "../features/TabSlice";
 import { useAppDispatch } from "../app/store";
 
@@ -20,7 +20,7 @@ export const Note = ({id,  title, isOpen}: NoteProps) => {
     
     const handleUpdateTitle = () => {
         setEdit(prevEdit => !prevEdit)
-        dispatch(editNoteTitle({noteId: id, newTitle}))
+        dispatch(updateTitle({noteId: id, newTitle}))
     }
 
     return (

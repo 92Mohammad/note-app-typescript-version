@@ -14,7 +14,6 @@ export interface NoteType {
 export interface TabsType extends NoteType {
     isSelected: boolean;
     content: string;
-    previousId: string
 }
 
 export type createNoteProps = {
@@ -29,7 +28,8 @@ export interface OpenTabParameter {
 }
 export interface selectNextTabParameter{
     nextTab: TabsType,
-    previousId: string
+    previousTabId: string;
+    previousTabContent: string;
 }
   
 export interface saveContentParameter {
@@ -51,7 +51,6 @@ export const getNextTab = (tabs: TabsType[], tabId: string): TabsType => {
         title: '',
         isSelected: false,
         content: '',
-        previousId: ""
     } 
     if (tab && tab.isSelected){
         if(indexOfTab == 0 && tabs.length > 1) {

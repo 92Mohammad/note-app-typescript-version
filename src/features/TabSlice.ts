@@ -1,23 +1,34 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import {
   BASE_URL,
   TabsType,
-  saveContentParameter
+  saveContentParameter,
+  selectNextTabParameter,
+  getNextTab
+
 } from "../utils";
 import { setNotes } from "./NoteSlice";
 import { RootState } from "../app/store";
+import { TbAB } from "react-icons/tb";
+import { IoIosShuffle } from "react-icons/io";
 
 
 export interface TabsState {
   tabs: TabsType[];
-  previousId: string;
+  currentTab: TabsType;
   errors: any;
 }
 
+const initialCurrentTabValue: TabsType = {
+  isSelected: false,
+  content: "",
+  _id: "",
+  title: ""
+}
 
 const initialState: TabsState = {
   tabs: [],
-  previousId: "",
+  currentTab: initialCurrentTabValue,
   errors: null,
 };
 
@@ -35,11 +46,7 @@ export const getTabs = createAsyncThunk(
 
       if (res.ok) {
         const allOpenTabs: TabsType[] = await res.json();
-        console.log("tabs recieved from server : ", allOpenTabs);
-
-        const findPreviousId = allOpenTabs.find(tab => tab.isSelected);
-        thunkAPI.dispatch(setPreviousId(findPreviousId && findPreviousId._id))
-
+        console.log('all tabs: ', allOpenTabs)
         thunkAPI.dispatch(setTabs(allOpenTabs));
         
       }
@@ -64,11 +71,11 @@ export const openTab = createAsyncThunk(
       });
       if (res.ok) {
         const data = await res.json();
-        console.log(data)
+        // console.log(data)
         const state = thunkAPI.getState() as RootState;
         // 1. make isOpen property of note as true
         const { notes } = state.notes;
-        console.log('this is notes inside open tab: ', notes);
+        // console.log('this is notes inside open tab: ', notes);
         const updatedNoteArray = notes.map((note) =>note._id === tabId ? { ...note, isOpen: true } : note);
         thunkAPI.dispatch(setNotes(updatedNoteArray));
 
@@ -81,21 +88,13 @@ export const openTab = createAsyncThunk(
   }
 );
 
+
+
 export const selectNextTab = createAsyncThunk(
   "/tabs/selectNewTab",
-  async (nextTab: TabsType, thunkAPI) => {
-    // const { nextTab } = data;
-
-    const state = thunkAPI.getState() as RootState;
-    const { tabs, previousId } = state.tabs;
-    console.log('previous id in selecte next tab: ', previousId);
-
-    
+  async ({nextTab, previousTabId, previousTabContent }: selectNextTabParameter , thunkAPI) => {
 
     try {
-      // find the content of previousTab 
-      const findContent = tabs.find(tab => tab._id === previousId);
-      console.log('content tab in select next tab: ', findContent)
       const res = await fetch(`${BASE_URL}/tab/select-next-tab`, {
         method: "POST",
         headers: {
@@ -104,12 +103,11 @@ export const selectNextTab = createAsyncThunk(
         },
         body: JSON.stringify({
           tabId: nextTab._id,
-          previousTabId: previousId,
-          content:  findContent?.content
+          previousTabId,
+          content: previousTabContent
         }),
       });
       const data = await res.json();
-      console.log("response: ", data);
 
       if (res.ok) {
         // 2. set tab as selecteTab
@@ -126,11 +124,12 @@ export const selectNextTab = createAsyncThunk(
 
 export const removeTab = createAsyncThunk(
   "/tabs/removeTab",
-  async (tabId: string, thunkAPI) => {
+  async (tab: TabsType, thunkAPI) => {
 
     const state = thunkAPI.getState() as RootState;
-    const { tabs , previousId} = state.tabs;
-    const findTabContent = tabs.find(tab => tab._id === tabId);
+    const { tabs } = state.tabs;
+    const nextTabId: string = tab.isSelected ? getNextTab(tabs, tab._id)._id : "";
+    const currentTabContent: string = tab.isSelected ? tab.content : "";
     
     try {
       const res = await fetch(`${BASE_URL}/tab/remove-tab`, {
@@ -140,47 +139,22 @@ export const removeTab = createAsyncThunk(
           authorization: localStorage.getItem("authToken")!,
         },
         body: JSON.stringify({
-          tabId: tabId,
-          previousTabId: previousId,
-          content: findTabContent ? findTabContent.content : "" 
+          tabId: tab._id,
+          nextTabId,
+          content: currentTabContent
         }),
       });
       if (res.ok) {
         const data = await res.json() ;
-        thunkAPI.dispatch(setTabs(data.updatedTab as TabsType[]));
 
+        const updatedTabs: TabsType[] = data.updatedTabs;
+
+        thunkAPI.dispatch(setTabs(updatedTabs));
+        
         // now set isOpen = false in notes array;
         const { notes } = state.notes;
-        const updatedNoteArray = notes.map(note => note._id == tabId ? {...note, isOpen: false}: note);
+        const updatedNoteArray = notes.map(note => note._id == tab._id ? {...note, isOpen: false}: note);
         thunkAPI.dispatch(setNotes(updatedNoteArray));
-
-        // const state = (await thunkAPI.getState()) as RootState;
-        // const { notes, previousId } = state.notes;
-        // const { tabs } = state.tabs;
-
-        // const removedTab: TabsType[] = tabs.filter((tab) => tab._id === tabId);
-        // if (removedTab[0].selectedTab) {
-        //   const nextTab = getNextTab(tabs, tabId);
-        //   if (nextTab._id === "") {
-        //     thunkAPI.dispatch(setSelectedTab(nextTab));
-        //   } else {
-        //     thunkAPI.dispatch(selectNextTab({ nextTab, previousId }));
-        //   }
-        // }
-
-        // // 2. then remove the tab with tab id
-        // const remainingTab = tabs.filter((tab) => tab._id !== tabId);
-        // thunkAPI.dispatch(setTabs(remainingTab));
-
-        // // 3. Now make the isOpen property of note as false so that we can re-open it
-        // if (removedTab) {
-        //   const updatedNoteArray = notes.map((note) =>
-        //     note._id === removedTab[0].noteId
-        //       ? { ...note, isOpen: false }
-        //       : note
-        //   );
-        //   thunkAPI.dispatch(setNotes(updatedNoteArray));
-        // }
       }
     } catch (error: any) {
       console.log(error.message);
@@ -189,56 +163,48 @@ export const removeTab = createAsyncThunk(
   }
 );
 
-export const saveContent = createAsyncThunk('/tabs/saveContent', async({tabs, previousId}:saveContentParameter, thunkAPI) => {
-    try {
+// export const saveContent = createAsyncThunk('/tabs/saveContent', async({tabs, previousId}:saveContentParameter, thunkAPI) => {
+//     try {
         
-        const previousTab = tabs.find(tab => tab._id === previousId)
-        if (previousTab){
+//         const previousTab = tabs.find(tab => tab._id === previousId)
+//         if (previousTab){
     
-          await fetch(`${BASE_URL}/tab/save-content`, {
-            method: 'POST',
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({tabId: previousId, content: previousTab?.content})
-          })            
-        }
-        else {
-          console.log('previous tab does not exist')
-        }
+//           await fetch(`${BASE_URL}/tab/save-content`, {
+//             method: 'POST',
+//             headers: {
+//               "Content-Type": "application/json"
+//             },
+//             body: JSON.stringify({tabId: previousId, content: previousTab?.content})
+//           })            
+//         }
+//         else {
+//           console.log('previous tab does not exist')
+//         }
         
-      }
-      catch(error: any){
-        console.log(error.message);
-      }
-})
+//       }
+//       catch(error: any){
+//         console.log(error.message);
+//       }
+// })
 
 export const tabSlice = createSlice({
   name: "tabs",
   initialState,
   reducers: {
     setTabs: (state, action) => {
-      console.log("all tabs: ", action.payload);
       state.tabs = action.payload;
-      console.log('after setting the tabs: ', state.tabs);
-    },
-    setPreviousId: (state, action) => {
-      state.previousId = action.payload;
-    }
-    // setSelectedTab: (state, action) => {
-    //   console.log("new selected tab : ", action.payload);
-    //   state.selectedTab = action.payload;
-    //   console.log('after selection of tab: ', state.selectedTab )
-    // },
-    // onOpenSetTab: (state, action) => {
-    //   // const { updatedNoteArray, updatedTabArray} = action.payload;
-    //   // state.tabs = updatedTabArray;
       
-
-    // }
+    },
+    updateNoteContent: (state, action: PayloadAction<{id: string, content: string}>) => {
+      const {id, content} = action.payload;
+      const tab = state.tabs.find(tab => tab._id == id);
+      if (tab){
+        tab.content = content;
+      }
+    } 
   },
   
 });
 
 export default tabSlice.reducer;
-export const { setTabs, setPreviousId } = tabSlice.actions;
+export const { setTabs, updateNoteContent } = tabSlice.actions;

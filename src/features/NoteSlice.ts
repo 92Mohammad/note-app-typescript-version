@@ -116,7 +116,7 @@ export const deleteNote = createAsyncThunk(
   }
 );
 
-export const editNoteTitle = createAsyncThunk('/notes/editNoteTitle', async({noteId, newTitle}: editNoteTitleParameter, thunkAPI) => {
+export const updateTitle = createAsyncThunk('/notes/editNoteTitle', async({noteId, newTitle}: editNoteTitleParameter, thunkAPI) => {
   const state = thunkAPI.getState() as RootState;
   const { notes } = state.notes;
   const note = notes.find((note) => note._id === noteId);
@@ -184,7 +184,6 @@ export const noteSlice = createSlice({
       if (messageType === "success") {
         const notes = action.payload.notes;
         state.notes = notes;
-        console.log('all notes: ', state.notes)
       } else {
         console.log("Error: ", action.payload);
       }

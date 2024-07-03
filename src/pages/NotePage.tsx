@@ -2,7 +2,7 @@ import { Note } from "../@components/Note";
 import { TabsBar } from "../@components/TabsBar";
 import { Editor } from "../@components/Editor";
 import { useEffect } from "react";
-import { getTabs, selectNextTab, setTabs} from "../features/TabSlice";
+import { getTabs, } from "../features/TabSlice";
 import {
   fetchAllNotes,
   createNewNote,
