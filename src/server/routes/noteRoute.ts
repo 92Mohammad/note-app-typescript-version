@@ -56,9 +56,9 @@ router.post('/update-note-title', auth,  async(req: Request, res: Response) => {
             {$set: {title: newTitle}},
         )
         if(updatedNote){            
-            return res.status(200).json({message: "Title updated succesfully in both collection"});
+            return res.status(200).json({message: "Title updated successfully"});
         }
-        return res.status(501).json({message: "Could not updated title in Note collection successfully"});
+        return res.status(501).json({message: "Could not updated title in Note collection!"});
     }
     catch(error: any){
         console.error(error.message)

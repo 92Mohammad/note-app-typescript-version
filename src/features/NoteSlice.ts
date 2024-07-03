@@ -138,25 +138,24 @@ export const updateTitle = createAsyncThunk('/notes/editNoteTitle', async({noteI
       );
 
       if (res.ok) {
-        // // 1. update the title from note array
-        // const updatedNoteArray = notes.map((note) =>
-        //   note._id === noteId ? { ...note, title: newTitle } : note
-        // );
-        // thunkAPI.dispatch(setNotes(updatedNoteArray));
+        // 1. update the title from note array
+        const updatedNoteArray = notes.map((note) =>
+          note._id === noteId ? { ...note, title: newTitle } : note
+        );
+        thunkAPI.dispatch(setNotes(updatedNoteArray));
 
-        // // 2. update the title from tab array
-        // const { tabs} = state.tabs;
-        // const updatedTabsArray = tabs.map((tab) =>
-        //   tab.noteId === noteId ? { ...tab, title: newTitle } : tab
-        // );
-        // thunkAPI.dispatch(setTabs(updatedTabsArray));
+        // 2. update the title from tab array
+        const { tabs} = state.tabs;
+        const updatedTabArray = tabs.map((tab) =>
+          tab._id === noteId ? { ...tab, title: newTitle } : tab
+        );
+        thunkAPI.dispatch(setTabs(updatedTabArray));
       }
     } catch (error: any) {
       console.log(error.message);
       return thunkAPI.rejectWithValue(error);
     }
   }
-
 })
 
 export const noteSlice = createSlice({
