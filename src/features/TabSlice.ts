@@ -2,15 +2,12 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import {
   BASE_URL,
   TabsType,
-  saveContentParameter,
   selectNextTabParameter,
   getNextTab
 
 } from "../utils";
 import { setNotes } from "./NoteSlice";
 import { RootState } from "../app/store";
-import { TbAB } from "react-icons/tb";
-import { IoIosShuffle } from "react-icons/io";
 
 
 export interface TabsState {
@@ -46,7 +43,7 @@ export const getTabs = createAsyncThunk(
 
       if (res.ok) {
         const allOpenTabs: TabsType[] = await res.json();
-        console.log('all tabs: ', allOpenTabs)
+
         thunkAPI.dispatch(setTabs(allOpenTabs));
         
       }
@@ -60,7 +57,7 @@ export const openTab = createAsyncThunk(
   "/tabs/openTab",
   async (tabId: string, thunkAPI) => {
     try {
-      
+
       const res = await fetch(`${BASE_URL}/tab/createNewTab`, {
         method: "POST",
         headers: {
@@ -71,11 +68,10 @@ export const openTab = createAsyncThunk(
       });
       if (res.ok) {
         const data = await res.json();
-        // console.log(data)
         const state = thunkAPI.getState() as RootState;
         // 1. make isOpen property of note as true
         const { notes } = state.notes;
-        // console.log('this is notes inside open tab: ', notes);
+
         const updatedNoteArray = notes.map((note) =>note._id === tabId ? { ...note, isOpen: true } : note);
         thunkAPI.dispatch(setNotes(updatedNoteArray));
 
@@ -93,7 +89,6 @@ export const openTab = createAsyncThunk(
 export const selectNextTab = createAsyncThunk(
   "/tabs/selectNewTab",
   async ({nextTab, previousTabId, previousTabContent }: selectNextTabParameter , thunkAPI) => {
-
     try {
       const res = await fetch(`${BASE_URL}/tab/select-next-tab`, {
         method: "POST",
@@ -163,29 +158,6 @@ export const removeTab = createAsyncThunk(
   }
 );
 
-// export const saveContent = createAsyncThunk('/tabs/saveContent', async({tabs, previousId}:saveContentParameter, thunkAPI) => {
-//     try {
-        
-//         const previousTab = tabs.find(tab => tab._id === previousId)
-//         if (previousTab){
-    
-//           await fetch(`${BASE_URL}/tab/save-content`, {
-//             method: 'POST',
-//             headers: {
-//               "Content-Type": "application/json"
-//             },
-//             body: JSON.stringify({tabId: previousId, content: previousTab?.content})
-//           })            
-//         }
-//         else {
-//           console.log('previous tab does not exist')
-//         }
-        
-//       }
-//       catch(error: any){
-//         console.log(error.message);
-//       }
-// })
 
 export const tabSlice = createSlice({
   name: "tabs",

@@ -4,17 +4,13 @@ import { selectNextTab, removeTab } from "../features/TabSlice";
 import { RootState, useAppDispatch } from "../app/store";
 import { useSelector } from "react-redux";
 
-
-
-
 interface TabProps {
-    id: string;
     title: string;
     tab: TabsType;
     isSelected: boolean 
 }
 
-export const Tab = ({id, title, tab, isSelected}: TabProps) => {
+export const Tab = ({ title, tab, isSelected}: TabProps) => {
     const dispatch = useAppDispatch();
     const { tabs } = useSelector((state: RootState) => state.tabs);
 
@@ -29,10 +25,7 @@ export const Tab = ({id, title, tab, isSelected}: TabProps) => {
             }))
         }
     }
-    // const handleSelectAndRemove  = (action: ) => {
 
-    // }
-    
 
     return (
         <div className={`${isSelected ? " bg-gray-900" : "bg-gray-700 "} flex items-center gap-2 px-2  justify-between h-9 cursor-pointer  border-r`} >

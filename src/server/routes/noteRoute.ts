@@ -3,8 +3,6 @@ const router = express.Router();
 import auth from '../middleware/jwtAuthenticate'
 import Notes from '../models/note.model'
 
-
-
 router.get('/getAllNotes', auth, async(req: Request, res: Response) => {
     
     try {
@@ -13,8 +11,7 @@ router.get('/getAllNotes', auth, async(req: Request, res: Response) => {
         const notes = await Notes.find(
             { userId: userId},
             {_id: 1, title: 1, isOpen: 1}
-        ) 
-        
+        )         
         
         if (notes.length !== 0){
             return res.status(200).json({messageType: 'success', notes} )
@@ -49,7 +46,6 @@ router.post('/createNotes', auth, async(req: Request, res: Response) => {
 router.post('/update-note-title', auth,  async(req: Request, res: Response) => {
     try {
         const { noteId, newTitle} = req.body;
-        console.log(noteId, " ", newTitle);
 
         const updatedNote = await Notes.findByIdAndUpdate(
             {_id: noteId},
@@ -69,23 +65,20 @@ router.post('/update-note-title', auth,  async(req: Request, res: Response) => {
 
 router.delete('/delete-note', auth, async (req: Request, res: Response) => {
     try {
-        const { noteId, previousId } = req.body;
+        const { noteId, nextTabId } = req.body;
         // first delete the note from Note collection
         
-        const deleteResult = await Notes.findByIdAndDelete({ _id: noteId});
-        console.log('deleted result is: ', deleteResult);
-
-
-        if (!deleteResult) {
+        const deleteNote = await Notes.findByIdAndDelete({ _id: noteId});
+        if (!deleteNote) {
             return res.status(500).json({ message: "Could not delete note from Note collection"});
         }
-        if (previousId !== noteId){
+        if (nextTabId !== ""){
             await Notes.findByIdAndUpdate(
-                {_id: previousId},
+                {_id: nextTabId},
                 {$set: {isSelected: true}}
             )
         }
-        return res.status(200).json({message: "Note deleted successfully from both collection"})        
+        return res.status(200).json({message: "Note deleted successfully"})        
     }
     catch (error: any) {
         return res.status(500).json({ error: error.messgae});

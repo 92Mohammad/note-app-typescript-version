@@ -1,6 +1,6 @@
 import { MdEdit, MdDelete } from "react-icons/md";
 import { useState } from "react";
-import { deleteNote, updateTitle } from "../features/NoteSlice";
+import { updateTitle, setIsDelete } from "../features/NoteSlice";
 import { openTab } from "../features/TabSlice";
 import { useAppDispatch } from "../app/store";
 
@@ -67,7 +67,7 @@ export const Note = ({id,  title, isOpen}: NoteProps) => {
         
                         </div>
                         <div  className="px-1 rounded-sm py-1 bg-[#15202B] cursor-pointer"   >
-                            <MdDelete  onClick={() => dispatch(deleteNote(id))}/>
+                            <MdDelete  onClick={() => dispatch(setIsDelete({id, isDelete: true, isOpen: isOpen}))}/>
         
                         </div>              
                     </div>

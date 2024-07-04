@@ -34,12 +34,13 @@ router.post('/createNewTab', auth,  async(req, res) => {
         const userId = req.headers["userId"];
 
         // const parsedData = validateTabInput(req.body);
-        console.log('create new route')
+
         // if (!parsedData.success){
         //     return res.status(411).json({error: parsedData.error})
         // }
         // const {noteId} = parsedData.data;
         const { noteId} = req.body;
+
 
         
         // first make isSelected property for all open tab = false
@@ -76,9 +77,10 @@ router.post('/createNewTab', auth,  async(req, res) => {
 router.post('/remove-tab', auth, async (req, res) => {
     const userId = req.headers["userId"];
     const { tabId, nextTabId, content } = req.body;
+
     try {
 
-        if (nextTabId && content){
+        if (nextTabId){
             // menas that we are going to remove current working tab
             // 1. remove tab and  save content
             const removeTabAndSaveContent = await Notes.findByIdAndUpdate(
@@ -94,11 +96,13 @@ router.post('/remove-tab', auth, async (req, res) => {
                     {$set: {isSelected: true}},
                     {new: true}
                 ) 
+    
                 if(selectNewTab.acknowledged){
                     const updatedTabs = await Notes.find(
                         {userId: userId, isOpen: true},
                         {userId: 0, isOpen: 0, __v: 0}     
                     )
+    
                     return res.status(200).json({message: "Tab close successfully", updatedTabs})
                 }        
 
@@ -118,7 +122,7 @@ router.post('/remove-tab', auth, async (req, res) => {
                 {userId: userId, isOpen: true},
                 {userId: 0, isOpen: 0, __v: 0}     
             )
-            console.log('after last tab removed: ', updatedTabs)
+    
             return res.status(200).json({message: "Tab close successfully", updatedTabs})
         }
         
@@ -177,37 +181,5 @@ router.post('/select-next-tab',  auth, async(req, res) => {
 })
 
 
-// router.post('/save-content', async(req, res) => {
-//     try {
-//         const{tabId, content} = req.body;
-        
-//         const tab = await Tabs.findById({_id: tabId}, {noteId: 1, _id: 0})
-
-//         if (tab){
-//             // first save the content in to Note collection
-//             const saveInNoteCollection = await Note.findByIdAndUpdate({_id: tab.noteId}, {$set: {content: content}})        
-//             if (saveInNoteCollection){
-                
-//                 // find by id and update
-//                 const isContentSaved = await Tabs.findByIdAndUpdate(
-//                     {_id: tabId}, 
-//                     {$set: {content: content}
-//                 })
-
-//                 if(isContentSaved){
-//                     return res.status(201).json("Content saved successfully")
-//                 }
-//                 else {
-//                     return res.json('Failed to save the content')
-//                 }
-//             }
-
-//         }
-
-//     }
-//     catch(error: any){
-//         console.log(error.message)
-//     }
-// })
 export default router;
 

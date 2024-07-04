@@ -12,7 +12,6 @@ export const TabsBar = () => {
                 tabs.map((tab, index) => {
                     return <Tab 
                         key = {index}
-                        id = {tab._id}
                         isSelected = {tab.isSelected}
                         tab = {tab}
                         title = {tab.title}  

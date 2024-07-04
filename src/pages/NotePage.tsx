@@ -1,6 +1,7 @@
 import { Note } from "../@components/Note";
 import { TabsBar } from "../@components/TabsBar";
 import { Editor } from "../@components/Editor";
+import AlertDialogSlide from "../@components/AlertDialogSlide";
 import { useEffect } from "react";
 import { getTabs, } from "../features/TabSlice";
 import {
@@ -11,7 +12,6 @@ import {
 } from "../features/NoteSlice";
 import { useSelector } from "react-redux";
 import {  RootState, useAppDispatch } from "../app/store";
-
 
 
 export const NotePage = () => {
@@ -80,6 +80,7 @@ export const NotePage = () => {
           <div className="text-white px-4 py-2 fixed top-10 bottom-0 left-60 right-0">
             <Editor/>
           </div>
+          {<AlertDialogSlide />}
         </section>
       </main>
     </>
